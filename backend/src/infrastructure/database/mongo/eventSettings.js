@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const eventSettingsSchema = new mongoose.Schema({
+     eventIdMysql: {
+        type: Number,
+        required: true,
+        index: true
+    },
     eventType: {
         type: String,
         enum: ['cinema', 'concert', 'transport'],

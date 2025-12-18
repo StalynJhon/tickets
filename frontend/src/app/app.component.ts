@@ -23,4 +23,9 @@ export class AppComponent {
     event.preventDefault();
     this.router.navigate(['/clientes']);
   }
+
+  irEventos(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/eventos']);
+  }
 }

@@ -6,7 +6,7 @@ const {
     mostrarEventos, crearEvento, mostrarTicketsUsuario, crearTicket,
     obtenerDashboard, buscarEventos, obtenerStaffEventos, asignarStaffEvento,
     obtenerNotificaciones, marcarNotificacionLeida, validarTicketQR,
-    cancelarEvento
+    cancelarEvento, editarEvento, eliminarEvento
 } = require('../../http/controllers/event.controller');
 
 // Validaciones
@@ -37,6 +37,9 @@ router.get('/eventos', mostrarEventos);
 router.post('/eventos', validacionEvento, crearEvento);
 router.get('/eventos/buscar', buscarEventos);
 router.put('/eventos/:id/cancelar', cancelarEvento);
+router.put('/eventos/:id', editarEvento);
+router.delete('/eventos/:id', eliminarEvento);
+
 
 // Rutas de Tickets
 router.get('/usuarios/:usuarioId/tickets', mostrarTicketsUsuario);

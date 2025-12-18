@@ -3,6 +3,7 @@ const orm = require('../../../infrastructure/database/connection/dataBase.orm');
 const sql = require('../../../infrastructure/database/connection/dataBase.sql');
 const mongo = require('../../../infrastructure/database/connection/dataBaseMongose');
 const { cifrarDatos, descifrarDatos } = require('../../../application/encrypDates');
+const EventSettings = require('../../../infrastructure/database/mongo/eventSettings');
 
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {
@@ -152,6 +153,31 @@ eventsCtl.crearEvento = async (req, res) => {
             stateEvent: true,
             createEvent: new Date().toLocaleString(),
         });
+
+              // 🔹 Crear configuración del evento en MongoDB
+await EventSettings.create({
+    eventIdMysql: nuevoEvento.idEvent,
+    eventType: eventType,
+
+    generalSettings: {
+        maxReservationsPerUser: 5,
+        reservationExpirationMinutes: 30
+    },
+
+    pricingSettings: {
+        taxConfiguration: {
+            taxRate: 0.12,
+            taxIncluded: true
+        }
+    },
+
+    notificationSettings: {
+        reminderTimes: [24, 2],
+        smsEnabled: false,
+        pushNotificationsEnabled: true
+    }
+});
+
 
         return res.status(201).json({
             message: 'Evento creado exitosamente',
@@ -659,5 +685,91 @@ eventsCtl.cancelarEvento = async (req, res) => {
         return res.status(500).json({ message: 'Error al cancelar evento', error: error.message });
     }
 };
+// Editar evento
+eventsCtl.editarEvento = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            nameEvent,
+            descriptionEvent,
+            venue,
+            dateTimeEvent,
+            capacity,
+            imageUrl
+        } = req.body;
+
+        // Verificar si existe
+        const [evento] = await sql.promise().query(
+            'SELECT idEvent FROM events WHERE idEvent = ? AND stateEvent = 1',
+            [id]
+        );
+
+        if (evento.length === 0) {
+            return res.status(404).json({ message: 'Evento no encontrado' });
+        }
+
+        await sql.promise().query(
+            `UPDATE events 
+             SET nameEvent = ?, 
+                 descriptionEvent = ?, 
+                 venue = ?, 
+                 dateTimeEvent = ?, 
+                 capacity = ?, 
+                 imageUrl = ?, 
+                 updateEvent = ?
+             WHERE idEvent = ?`,
+            [
+                cifrarDatos(nameEvent),
+                cifrarDatos(descriptionEvent || ''),
+                cifrarDatos(venue || ''),
+                new Date(dateTimeEvent),
+                capacity || 0,
+                imageUrl || '',
+                new Date().toLocaleString(),
+                id
+            ]
+        );
+
+        return res.json({ message: 'Evento actualizado correctamente' });
+
+    } catch (error) {
+        console.error('Error al editar evento:', error);
+        return res.status(500).json({
+            message: 'Error al editar evento',
+            error: error.message
+        });
+    }
+};
+
+// Eliminar evento (soft delete)
+eventsCtl.eliminarEvento = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [resultado] = await sql.promise().query(
+            `UPDATE events 
+             SET stateEvent = 0, updateEvent = ?
+             WHERE idEvent = ?`,
+            [new Date().toLocaleString(), id]
+        );
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ message: 'Evento no encontrado' });
+        }
+
+        // 🔥 BORRAR TAMBIÉN EN MONGO
+        await EventSettings.deleteOne({ eventIdMysql: id });
+
+        return res.json({ message: 'Evento eliminado correctamente' });
+
+    } catch (error) {
+        console.error('Error al eliminar evento:', error);
+        return res.status(500).json({
+            message: 'Error al eliminar evento',
+            error: error.message
+        });
+    }
+};
+
 
 module.exports = eventsCtl;
