@@ -1,0 +1,55 @@
+<header class="topbar">
+<h2>EVENTOS</h2>
+<span class="user">Administrador<br> Miguel Morales</span>
+</header>
+
+
+<div class="container">
+<input
+type="text"
+placeholder="Buscar Eventos..."
+class="search"
+/>
+
+
+<div class="actions">
+<button class="btn" (click)="abrirFormulario()">Agregar película</button>
+</div>
+
+
+<div class="cards">
+<div class="card" *ngFor="let p of peliculas">
+<img [src]="p.imageUrl" />
+<h4>{{ p.nameEvent }}</h4>
+<div class="card-actions">
+<button (click)="editar(p)">Editar</button>
+<button (click)="eliminar(p.idEvent)">Eliminar</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- MODAL CRUD -->
+<div class="modal" *ngIf="mostrarFormulario">
+<div class="modal-content">
+<h3>{{ editando ? 'Editar película' : 'Nueva película' }}</h3>
+
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+<input formControlName="nameEvent" placeholder="Título" />
+<textarea formControlName="descriptionEvent" placeholder="Descripción"></textarea>
+<input formControlName="microserviceEventId" placeholder="Microservicio" />
+<input formControlName="venue" placeholder="Lugar" />
+<input type="datetime-local" formControlName="dateTimeEvent" />
+<input type="number" formControlName="capacity" placeholder="Capacidad" />
+<input formControlName="imageUrl" placeholder="Imagen URL" />
+
+
+<div class="modal-actions">
+<button type="submit">Guardar</button>
+<button type="button" (click)="cerrarFormulario()">Cancelar</button>
+</div>
+</form>
+</div>
+</div>

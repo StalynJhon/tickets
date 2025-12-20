@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { EventosService } from './eventos.service';
 import Swal from 'sweetalert2';
@@ -10,7 +9,6 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule
   ],
   templateUrl: './eventos.component.html',
@@ -19,9 +17,7 @@ import Swal from 'sweetalert2';
 export class EventosComponent implements OnInit {
 
   peliculas: any[] = [];
-  todasLasPeliculas: any[] = [];
   form!: FormGroup;
-  terminoBusqueda: string = '';
 
   editando = false;
   eventoId!: number;
@@ -53,26 +49,11 @@ export class EventosComponent implements OnInit {
     this.eventosService.getEventos().subscribe({
       next: (res: any[]) => {
         this.peliculas = res.filter(e => e.eventType === 'cinema');
-        this.todasLasPeliculas = [...this.peliculas];
       },
       error: () => {
         Swal.fire('Error', 'No se pudieron cargar las películas', 'error');
       }
     });
-  }
-
-  // 🔍 Buscar películas
-  buscarPeliculas(event: any) {
-    const termino = this.terminoBusqueda.toLowerCase().trim();
-    
-    if (!termino) {
-      this.peliculas = [...this.todasLasPeliculas];
-      return;
-    }
-    
-    this.peliculas = this.todasLasPeliculas.filter(pelicula => 
-      pelicula.nameEvent.toLowerCase().includes(termino)
-    );
   }
 
   // ➕ Abrir formulario (Agregar)
@@ -116,13 +97,10 @@ export class EventosComponent implements OnInit {
     } else {
       this.eventosService.crearEvento(payload)
         .subscribe({
-          next: (response: any) => {
+          next: () => {
             Swal.fire('Película creada', 'La película se creó correctamente', 'success');
             this.cerrarFormulario();
-            // Agregar la nueva película al array sin recargar
-            const nuevaPelicula = { ...payload, idEvent: response.idEvent };
-            this.peliculas.push(nuevaPelicula);
-            this.todasLasPeliculas.push(nuevaPelicula);
+            this.cargarPeliculas(); // 👈 se visualiza inmediatamente
           },
           error: () => {
             Swal.fire('Error', 'No se pudo crear la película', 'error');
@@ -163,9 +141,7 @@ export class EventosComponent implements OnInit {
           .subscribe({
             next: () => {
               Swal.fire('Eliminado', 'La película fue eliminada', 'success');
-              // Eliminar la película del array sin recargar
-              this.peliculas = this.peliculas.filter(p => p.idEvent !== id);
-              this.todasLasPeliculas = this.todasLasPeliculas.filter(p => p.idEvent !== id);
+              this.cargarPeliculas();
             },
             error: () => {
               Swal.fire('Error', 'No se pudo eliminar la película', 'error');
