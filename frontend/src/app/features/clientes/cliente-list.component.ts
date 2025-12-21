@@ -28,7 +28,8 @@ export class ClienteListComponent implements OnInit {
           ...cliente,
           emailCliente: cliente.detallesMongo?.emailCliente || '',
           telefonoCliente: cliente.detallesMongo?.telefonoCliente || '',
-          direccionCliente: cliente.detallesMongo?.direccionCliente || ''
+          direccionCliente: cliente.detallesMongo?.direccionCliente || '',
+          menu: false // 👈 aseguramos que ningún menú esté abierto
         }));
       },
       error: (err) => {
@@ -45,7 +46,7 @@ export class ClienteListComponent implements OnInit {
     this.clienteService.eliminarCliente(id).subscribe({
       next: () => {
         alert('Cliente eliminado correctamente');
-        this.cargarClientes(); // refresca la tabla
+        this.cargarClientes();
       },
       error: (err) => {
         console.error(err);
@@ -58,6 +59,9 @@ export class ClienteListComponent implements OnInit {
   mostrarModal = false;
 
   abrirModalEditar(cliente: any) {
+    // 🔹 CERRAR TODOS LOS MENÚS ABIERTOS
+    this.clientes.forEach(c => c.menu = false);
+
     // copia para no modificar la tabla directamente
     this.clienteEditando = { ...cliente };
 
@@ -88,6 +92,20 @@ export class ClienteListComponent implements OnInit {
           alert('Error al actualizar cliente');
         }
       });
+  }
+
+  /* ============================
+     MÉTODOS MENÚ ⋮
+     ============================ */
+
+  editarDesdeMenu(cliente: any) {
+    cliente.menu = false;
+    this.abrirModalEditar(cliente);
+  }
+
+  eliminarDesdeMenu(cliente: any) {
+    cliente.menu = false;
+    this.eliminarCliente(cliente.idClientes);
   }
 
 }

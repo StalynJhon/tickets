@@ -1,63 +1,87 @@
-<h2>Lista de Clientes</h2>
+<!-- CONTENEDOR GENERAL (separa del sidebar) -->
+<div class="clientes-page">
 
-<table border="1" cellpadding="8" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Cédula</th>
-      <th>Nombre</th>
-      <th>Usuario</th>
-      <th>Email</th>
-      <th>Celular</th>
-      <th>Dirección</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
+  <!-- TITULO CENTRADO -->
+  <h2 class="titulo-clientes">Listado de Clientes</h2>
 
-  <tbody>
-    <tr *ngFor="let cliente of clientes">
-      <td>{{ cliente.cedulaCliente }}</td>
-      <td>{{ cliente.nombreCliente }}</td>
-      <td>{{ cliente.usernameCliente }}</td>
-      <td>{{ cliente.emailCliente || '—' }}</td>
-      <td>{{ cliente.telefonoCliente || '—' }}</td>
-      <td>{{ cliente.direccionCliente || '—' }}</td>
-      <td>{{ cliente.stadoCliente }}</td>
+  <!-- CARDS -->
+  <div class="cards-container">
+    <div class="cliente-card" *ngFor="let cliente of clientes">
 
-      <td>
-        <button (click)="abrirModalEditar(cliente)">Editar</button>
-        <button (click)="eliminarCliente(cliente.idClientes)">Eliminar</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+      <!-- MENU 3 PUNTOS -->
+      <div class="menu-container">
+        <button class="menu-btn" (click)="cliente.menu = !cliente.menu">⋮</button>
+
+        <div class="menu" *ngIf="cliente.menu">
+          <button (click)="editarDesdeMenu(cliente)">Editar</button>
+          <button (click)="eliminarDesdeMenu(cliente)">Eliminar</button>
+        </div>
+      </div>
+
+      <h3>{{ cliente.nombreCliente }}</h3>
+
+      <p><strong>Cédula:</strong> {{ cliente.cedulaCliente }}</p>
+      <p><strong>Email:</strong> {{ cliente.emailCliente || '—' }}</p>
+      <p><strong>Celular:</strong> {{ cliente.telefonoCliente || '—' }}</p>
+      <p><strong>Dirección:</strong> {{ cliente.direccionCliente || '—' }}</p>
+
+      <!-- ESTADO -->
+      <span class="estado activo">Activo</span>
+
+    </div>
+  </div>
+
+</div>
 
 <!-- MODAL EDITAR CLIENTE -->
 <div *ngIf="mostrarModal" class="modal-backdrop">
   <div class="modal">
-    <h3>Editar Cliente</h3>
+    <h2>Editar Cliente</h2>
 
     <form (ngSubmit)="guardarEdicion()">
-      <input type="text" [(ngModel)]="clienteEditando.cedulaCliente" name="cedulaCliente" placeholder="Cédula"
-        required />
 
-      <input type="text" [(ngModel)]="clienteEditando.nombreCliente" name="nombreCliente" placeholder="Nombre"
-        required />
+      <input
+        type="text"
+        [(ngModel)]="clienteEditando.cedulaCliente"
+        name="cedulaCliente"
+        placeholder="Cédula"
+        required
+      />
 
-      <input type="text" [(ngModel)]="clienteEditando.usernameCliente" name="usernameCliente" placeholder="Usuario"
-        required />
+      <input
+        type="text"
+        [(ngModel)]="clienteEditando.nombreCliente"
+        name="nombreCliente"
+        placeholder="Nombre"
+        required
+      />
 
-      <input type="email" [(ngModel)]="clienteEditando.emailCliente" name="emailCliente" placeholder="Email" />
+      <input
+        type="email"
+        [(ngModel)]="clienteEditando.emailCliente"
+        name="emailCliente"
+        placeholder="Email"
+      />
 
-      <input type="text" [(ngModel)]="clienteEditando.telefonoCliente" name="telefonoCliente" placeholder="Celular" />
+      <input
+        type="text"
+        [(ngModel)]="clienteEditando.telefonoCliente"
+        name="telefonoCliente"
+        placeholder="Celular"
+      />
 
-      <input type="text" [(ngModel)]="clienteEditando.direccionCliente" name="direccionCliente"
-        placeholder="Dirección" />
+      <input
+        type="text"
+        [(ngModel)]="clienteEditando.direccionCliente"
+        name="direccionCliente"
+        placeholder="Dirección"
+      />
 
       <div class="acciones">
-        <button type="submit">Guardar</button>
-        <button type="button" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-guardar">Guardar</button>
+        <button type="button" class="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
       </div>
+
     </form>
   </div>
 </div>
