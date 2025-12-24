@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClienteService } from './cliente.service';
+import { ClienteService } from '../cliente.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({

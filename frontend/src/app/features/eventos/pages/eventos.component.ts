@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { EventosService } from './eventos.service';
+import { EventosService } from '../eventos.service';
 import Swal from 'sweetalert2';
 
 @Component({
