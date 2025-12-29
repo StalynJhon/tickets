@@ -9,9 +9,9 @@
     ]
   },
   "files": [
-    "src/main.ts",
-    "src/main.server.ts",
-    "src/server.ts"
+    "src/app/entrypoint/main.ts",
+    "src/app/entrypoint/main.server.ts",
+    "src/app/entrypoint/server.ts"
   ],
   "include": [
     "src/**/*.d.ts"

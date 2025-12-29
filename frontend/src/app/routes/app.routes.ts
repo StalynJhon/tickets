@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './layout/dashboard/dashboard.component';
-import { ClienteListComponent } from './features/clientes/pages/cliente-list.component';
-import { EventosComponent } from './features/eventos/pages/eventos.component';
+import { DashboardComponent } from '../layout/dashboard/dashboard.component';
+import { ClienteListComponent } from '../features/clientes/pages/cliente-list.component';
+import { EventosComponent } from '../features/eventos/pages/eventos.component';
+import { PromocionesComponent } from '../features/promociones/page/promociones.component';
 
 export const routes: Routes = [
   // Ruta principal → Dashboard
@@ -12,6 +13,9 @@ export const routes: Routes = [
 
   // Clientes
   { path: 'clientes', component: ClienteListComponent },
+
+   // Promociones
+   { path: 'promociones', component: PromocionesComponent},
 
   // Cualquier ruta inválida → Dashboard
   { path: '**', redirectTo: 'dashboard' }

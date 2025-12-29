@@ -28,4 +28,9 @@ export class AppComponent {
     event.preventDefault();
     this.router.navigate(['/eventos']);
   }
+
+  irPromociones(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/promociones']);
+  }
 }
