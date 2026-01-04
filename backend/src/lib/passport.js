@@ -1,9 +1,11 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const FormData = require('form-data');
+
 const { cifrarDatos, descifrarDatos } = require('../application/encrypDates');
 
 //archvios de coneccion

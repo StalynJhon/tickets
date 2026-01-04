@@ -33,4 +33,9 @@ export class AppComponent {
     event.preventDefault();
     this.router.navigate(['/promociones']);
   }
+  
+  irConfiguracion(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/configuracion']);
+  }
 }
