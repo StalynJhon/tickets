@@ -1,0 +1,33 @@
+<h2>Crear Película</h2>
+
+<form (ngSubmit)="submit()">
+
+  <div>
+    <label>Título</label><br>
+    <input
+      type="text"
+      name="title"
+      [(ngModel)]="movie.title"
+      required
+    />
+  </div>
+
+  <div>
+    <label>Género</label><br>
+    <input
+      type="text"
+      name="genre"
+      [(ngModel)]="movie.genre"
+      required
+    />
+  </div>
+
+  <button type="submit" [disabled]="loading">
+    {{ loading ? 'Guardando...' : 'Guardar' }}
+  </button>
+
+</form>
+
+<div *ngIf="error" style="color: red;">
+  {{ error }}
+</div>
