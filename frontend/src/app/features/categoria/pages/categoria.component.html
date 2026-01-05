@@ -1,0 +1,89 @@
+<div class="container">
+  <h1>Gestión de Categorías de Eventos</h1>
+
+  <!-- FORMULARIO -->
+  <form (ngSubmit)="guardarCategoria()" class="formulario">
+    <input
+      type="text"
+      placeholder="Nombre de la categoría"
+      [(ngModel)]="categoriaForm.nombre"
+      name="nombre"
+      required
+    />
+
+    <input
+      type="text"
+      placeholder="Descripción"
+      [(ngModel)]="categoriaForm.descripcion"
+      name="descripcion"
+      required
+    />
+
+    <button type="submit">
+      {{ editando ? 'Actualizar' : 'Crear' }}
+    </button>
+  </form>
+
+  <!-- FILTRO -->
+  <div style="margin-bottom: 20px; text-align: right;">
+    <label for="filtro">Filtrar: </label>
+    <select
+      id="filtro"
+      [(ngModel)]="filtro"
+      (change)="aplicarFiltro()"
+      name="filtro"
+    >
+      <option value="todos">Todos</option>
+      <option value="activos">Activos</option>
+      <option value="inactivos">Inactivos</option>
+    </select>
+  </div>
+
+  <!-- TABLA -->
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let categoria of categoriasFiltradas">
+        <td>{{ categoria.nombre }}</td>
+        <td>{{ categoria.descripcion }}</td>
+        <td>
+          <span
+            [class.activo]="categoria.estado"
+            [class.inactivo]="!categoria.estado"
+          >
+            {{ categoria.estado ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+        <td>
+          <button
+            type="button"
+            class="editar"
+            (click)="editarCategoria(categoria)"
+          >
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="eliminar"
+            (click)="cambiarEstado(categoria.id)"
+          >
+            {{ categoria.estado ? 'Desactivar' : 'Activar' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
