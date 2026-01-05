@@ -13,9 +13,8 @@ import { ConfiguracionGeneralComponent } from '../features/configuracion/pages/c
 import { MovieListComponent } from '../features/movies/pages/movie-list/movie-list.component';
 import { MovieFormComponent } from '../features/movies/forms/movie-form/movie-form.component';
 
-/* Categorías */
-import { CategoriaListComponent } from '../features/categorias/pages/categoria-list/categoria-list.component';
-import { CategoriaFormComponent } from '../features/categorias/pages/categoria-form/categoria-form.component';
+//Categoria
+import { CategoriaComponent } from '../features/categoria/pages/categoria.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -41,10 +40,8 @@ export const routes: Routes = [
   { path: 'movies/new', component: MovieFormComponent },
   { path: 'movies/edit/:id', component: MovieFormComponent },
 
-  // Categorías
-  { path: 'categorias', component: CategoriaListComponent },
-  { path: 'categorias/nuevo', component: CategoriaFormComponent },
-  { path: 'categorias/editar/:id', component: CategoriaFormComponent },
+  // Categorias
+  { path: 'categorias', component: CategoriaComponent },
 
   // Cualquier ruta inválida
   { path: '**', redirectTo: 'dashboard' }
