@@ -1,0 +1,143 @@
+<div class="products-container">
+
+  <!-- HEADER -->
+  <div class="header-section">
+    <h1 class="page-title">
+      <span class="icon">🛍️</span>
+      Gestión de Productos
+    </h1>
+
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="openCategoryModal(true)">
+        📁 Añadir Categoría
+      </button>
+
+      <button class="btn btn-primary" (click)="openCreateModal()">
+        ➕ Nuevo Producto
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hero-badge">🍿</div>
+    <div class="hero-text">
+      <h2>TIENDA DE EXTRAS</h2>
+      <p>Complementa tu experiencia con nuestros combos y bebidas</p>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filters-card">
+    <div class="filters-header">
+      <h3 class="filters-title">Filtros de búsqueda</h3>
+
+      <button class="btn-view-toggle" (click)="toggleView()">
+        {{ view() === 'grid' ? '📋 Vista Tabla' : '🔲 Vista Cuadrícula' }}
+      </button>
+    </div>
+
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Buscar</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="filterSearch"
+          (ngModelChange)="applyFilters()"
+          placeholder="🔎 Buscar productos (ej. Vasos, Combos...)">
+      </div>
+
+      <div class="filter-group">
+        <label>Categoría</label>
+        <select class="form-control"
+                [(ngModel)]="filterCategory"
+                (ngModelChange)="applyFilters()">
+          <option value="">Todas</option>
+          @for (category of categories(); track category.idProductCategory) {
+            <option [value]="category.idProductCategory">
+              {{ category.nameCategory }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Disponibilidad</label>
+        <select class="form-control"
+                [(ngModel)]="filterAvailable"
+                (ngModelChange)="applyFilters()">
+          <option value="all">Todos</option>
+          <option value="true">Disponibles</option>
+          <option value="false">No disponibles</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="clearFilters()">
+          🔄 Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  @if (view() === 'grid') {
+    <div class="products-grid">
+
+      @for (product of filteredProducts(); track product.idProduct) {
+        <div class="product-card">
+
+          <div class="card-badges">
+            @if (product.newProduct) {
+              <span class="badge-new">🆕 Nuevo</span>
+            }
+            @if (product.popularProduct) {
+              <span class="badge-popular">⭐ Popular</span>
+            }
+          </div>
+
+          <div class="product-image-container">
+            <img *ngIf="product.imageUrl"
+                 [src]="product.imageUrl"
+                 class="product-image">
+            <div *ngIf="!product.imageUrl"
+                 class="product-image-placeholder">
+              📷
+            </div>
+          </div>
+
+          <div class="card-content">
+            <h3 class="product-name">{{ product.nameProduct }}</h3>
+            <p class="product-category">
+              {{ getCategoryName(product.categoryId) }}
+            </p>
+
+            <p class="product-description">
+              {{ product.descriptionProduct || 'Sin descripción' }}
+            </p>
+
+            <div class="product-pricing">
+              <span class="price-current">
+                ${{ product.priceProduct }}
+              </span>
+            </div>
+
+            <div class="product-actions">
+              <button class="btn btn-outline"
+                      (click)="openEditModal(product)">
+                Ver Detalle
+              </button>
+
+              <button class="btn btn-neon"
+                      (click)="addToCart(product)">
+                🛒 Agregar
+              </button>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+</div>

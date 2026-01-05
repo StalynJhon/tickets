@@ -2,6 +2,7 @@ const productsCtl = {};
 const orm = require('../../../infrastructure/database/connection/dataBase.orm');
 const sql = require('../../../infrastructure/database/connection/dataBase.sql');
 const { cifrarDatos, descifrarDatos } = require('../../../application/encrypDates');
+const ProductMetadata = require('../../../domain/models/productMetadata');
 
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {
@@ -156,6 +157,14 @@ productsCtl.mostrarProductos = async (req, res) => {
             ORDER BY p.popularProduct DESC, p.newProduct DESC, p.nameProduct ASC
         `);
 
+        // Obtener metadatos de imágenes de MongoDB
+        const productIds = productos.map(p => p.idProduct.toString());
+        const metadataList = await ProductMetadata.find({ idProductSql: { $in: productIds } });
+        const metadataMap = {};
+        metadataList.forEach(metadata => {
+            metadataMap[metadata.idProductSql] = metadata;
+        });
+
         const productosCompletos = productos.map(producto => ({
             ...producto,
             nameProduct: descifrarSeguro(producto.nameProduct),
@@ -165,7 +174,8 @@ productsCtl.mostrarProductos = async (req, res) => {
             nameCategory: descifrarSeguro(producto.nameCategory),
             finalPrice: parseFloat(producto.finalPrice || producto.priceProduct),
             hasActiveDiscount: !!producto.hasActiveDiscount,
-            stockStatus: producto.stockProduct <= 5 ? 'bajo' : producto.stockProduct <= 20 ? 'medio' : 'alto'
+            stockStatus: producto.stockProduct <= 5 ? 'bajo' : producto.stockProduct <= 20 ? 'medio' : 'alto',
+            imageUrl: metadataMap[producto.idProduct.toString()]?.imageUrl || null
         }));
 
         return res.json(productosCompletos);
@@ -192,11 +202,20 @@ productsCtl.obtenerProductosPorCategoria = async (req, res) => {
             ORDER BY p.popularProduct DESC, p.nameProduct ASC
         `, [categoryId]);
 
+        // Obtener metadatos de imágenes de MongoDB
+        const productIds = productos.map(p => p.idProduct.toString());
+        const metadataList = await ProductMetadata.find({ idProductSql: { $in: productIds } });
+        const metadataMap = {};
+        metadataList.forEach(metadata => {
+            metadataMap[metadata.idProductSql] = metadata;
+        });
+
         const productosCompletos = productos.map(producto => ({
             ...producto,
             nameProduct: descifrarSeguro(producto.nameProduct),
             descriptionProduct: descifrarSeguro(producto.descriptionProduct),
-            finalPrice: parseFloat(producto.finalPrice || producto.priceProduct)
+            finalPrice: parseFloat(producto.finalPrice || producto.priceProduct),
+            imageUrl: metadataMap[producto.idProduct.toString()]?.imageUrl || null
         }));
 
         return res.json(productosCompletos);
@@ -212,7 +231,8 @@ productsCtl.crearProducto = async (req, res) => {
         const { 
             nameProduct, descriptionProduct, priceProduct, categoryId,
             ingredients, allergens, stockProduct, popularProduct, newProduct,
-            discountPercentage, discountStartDate, discountEndDate
+            discountPercentage, discountStartDate, discountEndDate,
+            imageUrl
         } = req.body;
 
         // Validaciones
@@ -255,6 +275,14 @@ productsCtl.crearProducto = async (req, res) => {
             createProduct: new Date().toLocaleString(),
         });
 
+        // Guardar metadata de imagen en MongoDB si se proporciona
+        if (imageUrl) {
+            await ProductMetadata.create({
+                idProductSql: nuevoProducto.idProduct.toString(),
+                imageUrl: imageUrl
+            });
+        }
+
         return res.status(201).json({ 
             message: 'Producto creado exitosamente',
             idProduct: nuevoProducto.idProduct
@@ -277,7 +305,8 @@ productsCtl.actualizarProducto = async (req, res) => {
             nameProduct, descriptionProduct, priceProduct, categoryId,
             ingredients, allergens, stockProduct, availableProduct,
             popularProduct, newProduct, discountPercentage, 
-            discountStartDate, discountEndDate
+            discountStartDate, discountEndDate,
+            imageUrl
         } = req.body;
 
         // Validaciones
@@ -331,6 +360,22 @@ productsCtl.actualizarProducto = async (req, res) => {
                 id
             ]
         );
+
+        // Actualizar metadata de imagen en MongoDB si se proporciona
+        if (imageUrl !== undefined) {
+            const existingMetadata = await ProductMetadata.findOne({ idProductSql: id.toString() });
+            if (existingMetadata) {
+                await ProductMetadata.updateOne(
+                    { idProductSql: id.toString() },
+                    { imageUrl: imageUrl }
+                );
+            } else if (imageUrl) {
+                await ProductMetadata.create({
+                    idProductSql: id.toString(),
+                    imageUrl: imageUrl
+                });
+            }
+        }
 
         return res.json({ message: 'Producto actualizado exitosamente' });
 

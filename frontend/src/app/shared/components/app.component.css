@@ -42,14 +42,27 @@ body {
   text-decoration: none;
   font-weight: bold;
   display: block;
-  padding: 0.5rem 0;
-  border-radius: 4px;
-  transition: background 0.2s;
+  padding: 0.75rem 0.8rem;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.08s;
+  margin-bottom: 0.25rem;
 }
 
 .sidebar a:hover {
   background-color: #374151; /* hover más oscuro */
+  transform: translateX(3px);
 }
+
+.sidebar a.active {
+  background-color: #111827; /* destacado */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* Ajuste visual para los iconos y texto */
+.sidebar a {
+  font-size: 0.95rem;
+}
+
 
 .main-content {
   flex: 1;

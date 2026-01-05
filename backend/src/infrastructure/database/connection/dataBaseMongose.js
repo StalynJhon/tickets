@@ -67,6 +67,7 @@ const statisticsModel = require('../../../domain/models/statistics');
 const sistemLogsModel = require('../../../domain/models/systemLogs');
 const sistemSettingsModel = require('../../../domain/models/systemSettings');
 const transportMetadataModel = require('../../../domain/models/transportMetadata');
+const productMetadataModel = require('../../../domain/models/productMetadata');
 
 module.exports = {
   pageModel,
@@ -86,5 +87,6 @@ module.exports = {
   statisticsModel,
   sistemLogsModel,
   sistemSettingsModel,
-  transportMetadataModel  
+  transportMetadataModel,
+  productMetadataModel  
 };  

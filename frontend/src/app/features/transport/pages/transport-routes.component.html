@@ -1,0 +1,307 @@
+<div class="transport-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <span class="icon">🚌</span>
+      Gestión de Rutas de Transporte
+    </h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openCreateModal()">
+        <span class="icon">➕</span>
+        Nueva Ruta
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-card">
+    <h3 class="filters-title">Filtros de Búsqueda</h3>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Origen</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          [(ngModel)]="filterOrigin" 
+          (ngModelChange)="applyFilters()"
+          placeholder="Buscar por origen...">
+      </div>
+      
+      <div class="filter-group">
+        <label>Destino</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          [(ngModel)]="filterDestination" 
+          (ngModelChange)="applyFilters()"
+          placeholder="Buscar por destino...">
+      </div>
+      
+      <div class="filter-group">
+        <label>Tipo de Transporte</label>
+        <select 
+          class="form-control" 
+          [(ngModel)]="filterType" 
+          (ngModelChange)="applyFilters()">
+          <option value="">Todos</option>
+          @for (type of transportTypes; track type.value) {
+            <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="clearFilters()">
+          🔄 Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (loading()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <!-- Routes Table -->
+  <div class="table-card">
+    <div class="table-header">
+      <h3>Rutas Disponibles</h3>
+      <span class="count-badge">{{ filteredRoutes().length }} rutas</span>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Origen → Destino</th>
+            <th>Empresa</th>
+            <th>Distancia</th>
+            <th>Duración</th>
+            <th>Vehículos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredRoutes().length === 0) {
+            <tr>
+              <td colspan="10" class="no-data">
+                <div class="empty-state">
+                  <span class="icon">📭</span>
+                  <p>No se encontraron rutas</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (route of filteredRoutes(); track route.idTransportRoute) {
+            <tr class="table-row-hover">
+              <td>
+                <span class="route-code">{{ route.routeCode || 'N/A' }}</span>
+              </td>
+              <td>
+                <strong>{{ route.routeName }}</strong>
+              </td>
+              <td>
+                <span class="type-badge">
+                  @switch(route.transportType) {
+                    @case('bus') { 🚌 Bus }
+                    @case('metro') { 🚇 Metro }
+                    @case('flight') { ✈️ Vuelo }
+                    @case('train') { 🚂 Tren }
+                    @case('taxi') { 🚕 Taxi }
+                    @case('boat') { ⛵ Barco }
+                  }
+                </span>
+              </td>
+              <td>
+                <div class="route-path">
+                  <span class="origin">{{ route.origin }}</span>
+                  <span class="arrow">→</span>
+                  <span class="destination">{{ route.destination }}</span>
+                </div>
+              </td>
+              <td>{{ route.nameCompany }}</td>
+              <td>{{ route.distanceKm }} km</td>
+              <td>{{ route.estimatedDuration }} min</td>
+              <td>
+                <span class="info-badge">
+                  {{ route.vehiculosAsignados || 0 }} 🚐
+                </span>
+              </td>
+              <td>
+                <span [class]="'badge ' + getStatusBadgeClass(route.statusRoute)">
+                  {{ getStatusLabel(route.statusRoute) }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button 
+                    class="btn-icon btn-edit" 
+                    (click)="openEditModal(route)"
+                    title="Editar">
+                    ✏️
+                  </button>
+                  <button 
+                    class="btn-icon btn-delete" 
+                    (click)="deleteRoute(route)"
+                    title="Eliminar">
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal for Create/Edit -->
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editMode() ? '✏️ Editar Ruta' : '➕ Nueva Ruta' }}</h2>
+          <button class="btn-close" (click)="closeModal()">✖</button>
+        </div>
+        
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre de la Ruta *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.routeName"
+                  name="routeName"
+                  placeholder="Ej: Ruta Centro - Norte">
+              </div>
+              
+              <div class="form-group">
+                <label>Código</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.routeCode"
+                  name="routeCode"
+                  placeholder="Ej: RT-001">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tipo de Transporte *</label>
+                <select 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.transportType"
+                  name="transportType">
+                  @for (type of transportTypes; track type.value) {
+                    <option [value]="type.value">{{ type.label }}</option>
+                  }
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Empresa</label>
+                <select 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.companyId"
+                  name="companyId">
+                  <option [value]="0">Sin empresa (opcional)</option>
+                  @for (company of companies(); track company.idTransportCompany) {
+                    <option [value]="company.idTransportCompany">
+                      {{ company.nameCompany }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Origen *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.origin"
+                  name="origin"
+                  placeholder="Ciudad o lugar de origen">
+              </div>
+              
+              <div class="form-group">
+                <label>Destino *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.destination"
+                  name="destination"
+                  placeholder="Ciudad o lugar de destino">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Distancia (km)</label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.distanceKm"
+                  name="distanceKm"
+                  min="0"
+                  step="0.1">
+              </div>
+              
+              <div class="form-group">
+                <label>Duración Estimada (min)</label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.estimatedDuration"
+                  name="estimatedDuration"
+                  min="0">
+              </div>
+              
+              <div class="form-group">
+                <label>Costos de Peaje ($)</label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  [(ngModel)]="currentRoute.tollCosts"
+                  name="tollCosts"
+                  min="0"
+                  step="0.01">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Estado</label>
+              <select 
+                class="form-control" 
+                [(ngModel)]="currentRoute.statusRoute"
+                name="statusRoute">
+                <option value="active">Activo</option>
+                <option value="suspended">Suspendido</option>
+                <option value="maintenance">Mantenimiento</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" (click)="saveRoute()">
+            {{ editMode() ? 'Actualizar' : 'Crear' }} Ruta
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
