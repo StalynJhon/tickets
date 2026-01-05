@@ -10,21 +10,21 @@
         type="text"
         placeholder="Buscar eventos..."
         class="search-input"
-        (keyup.enter)="buscarConciertos($event)"
+        (keyup.enter)="buscarPeliculas($event)"
         [(ngModel)]="terminoBusqueda"
       />
       <div class="badge-container">
-        <span class="badge">Función concierto</span>
+        <span class="badge">Función cine</span>
       </div>
     </div>
     
     <div class="header-actions">
-      <button class="btn btn-add" (click)="abrirFormulario()">Agregar concierto</button>
+      <button class="btn btn-add" (click)="abrirFormulario()">Agregar película</button>
     </div>
   </div>
   
   <div class="cards-grid">
-    <div class="card" *ngFor="let p of conciertos">
+    <div class="card" *ngFor="let p of peliculas">
       <img [src]="p.imageUrl" alt="{{ p.nameEvent }}" />
       <div class="card-content">
         <h4>{{ p.nameEvent }}</h4>
@@ -50,7 +50,7 @@
 <!-- MODAL CRUD -->
 <div class="modal" *ngIf="mostrarFormulario">
 <div class="modal-content">
-<h3>{{ editando ? 'Editar concierto' : 'Nuevo concierto' }}</h3>
+<h3>{{ editando ? 'Editar película' : 'Nueva película' }}</h3>
 
 <form [formGroup]="form" (ngSubmit)="guardar()">
 <input formControlName="nameEvent" placeholder="Título" />

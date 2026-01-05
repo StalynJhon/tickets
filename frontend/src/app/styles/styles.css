@@ -11,3 +11,110 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
+/* --- TU NUEVO DISEÑO --- */
+
+.main-container {
+  padding: 30px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+  outline: none;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card-categoria {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: #f1f5f9;
+}
+
+.badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+/* Espaciado para los botones de las tarjetas */
+.card-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px; /* Esto separa los botones */
+}
+
+.btn-edit, .btn-delete {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: 0.2s;
+}
+
+.btn-edit:hover {
+  background: #f1f5f9;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.card-categoria.is-disabled {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  background-color: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  pointer-events: auto; 
+}
+
+.btn-activate {
+  background-color: #22c55e !important;
+  color: white;
+}

@@ -14,9 +14,8 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/frontend-ticket",
-            
             "index": "src/index.html",
-            "browser": "src/app/entrypoint/main.ts",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -28,13 +27,13 @@
               }
             ],
             "styles": [
-              "src/app/styles/styles.css"
+              "src/styles.css"
             ],
             "scripts": [],
-            "server": "src/app/entrypoint/main.server.ts",
+            "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
-              "entry": "src/app/entrypoint/server.ts"
+              "entry": "src/server.ts"
             }
           },
           "configurations": {
