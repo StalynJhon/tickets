@@ -1,7 +1,7 @@
 const productsCtl = {};
 const orm = require('../../../infrastructure/database/connection/dataBase.orm');
 const sql = require('../../../infrastructure/database/connection/dataBase.sql');
-const { cifrarDatos, descifrarDatos } = require('../../../application/encrypDates');
+const { cifrarDatos, descifrarDatos } = require('../../../application/services/encrypDates');
 
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {

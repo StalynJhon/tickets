@@ -22,7 +22,7 @@ const cors = require('cors');
 
 // Importar módulos locales
 const { MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT } = require('../src/config/keys');
-require('../src/lib/passport');
+require('../src/infrastructure/auth/passport');
 
 // Crear aplicación Express
 const app = express();

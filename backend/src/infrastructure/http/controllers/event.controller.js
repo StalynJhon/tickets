@@ -2,7 +2,7 @@ const eventsCtl = {};
 const orm = require('../../../infrastructure/database/connection/dataBase.orm');
 const sql = require('../../../infrastructure/database/connection/dataBase.sql');
 const mongo = require('../../../infrastructure/database/connection/dataBaseMongose');
-const { cifrarDatos, descifrarDatos } = require('../../../application/encrypDates');
+const { cifrarDatos, descifrarDatos } = require('../../../application/services/encrypDates');
 const EventSettings = require('../../../infrastructure/database/mongo/eventSettings');
 
 // Función para descifrar de forma segura

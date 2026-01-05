@@ -6,12 +6,12 @@ const path = require('path');
 const axios = require('axios');
 const FormData = require('form-data');
 
-const { cifrarDatos, descifrarDatos } = require('../application/encrypDates');
+const { cifrarDatos, descifrarDatos } = require('../../application/services/encrypDates');
 
 //archvios de coneccion
-const orm = require('../infrastructure/database/connection/dataBase.orm');
-const sql = require('../infrastructure/database/connection/dataBase.sql');
-const mongo = require('../infrastructure/database/connection/dataBaseMongose')
+const orm = require('../database/connection/dataBase.orm');
+const sql = require('../database/connection/dataBase.sql');
+const mongo = require('../database/connection/dataBaseMongose')
 
 const descifrarSeguro = (dato) => {
     try {

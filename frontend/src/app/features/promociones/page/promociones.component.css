@@ -1,17 +1,272 @@
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* ===============================
+   FONDO GLOBAL
+================================ */
+html, body {
+  background: #0B0C10;
+  color: #C5C6C7;
+  min-height: 100vh;
+  margin: 0;
 }
 
-@keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+/* ===============================
+   TOPBAR
+================================ */
+.topbar {
+  padding: 20px 30px;
+  background: #1F2833;
+  border-radius: 12px;
+  margin: 20px;
+  box-shadow: 0 0 20px rgba(102, 252, 241, 0.25);
+  color: #66FCF1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.2s ease-out;
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-.animate-scaleIn {
-  animation: scaleIn 0.25s ease-out;
+.user { text-align: right; }
+.role { font-size: 13px; opacity: 0.8; }
+.name { font-size: 14px; font-weight: 600; }
+
+/* ===============================
+   CONTENEDOR PRINCIPAL
+================================ */
+.card-container {
+  background: transparent;
+  padding: 24px;
+  margin-left: 30px;
+  margin-right: 24px;
+  border-radius: 16px;
+}
+
+/* ===============================
+   ACCIONES
+================================ */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* ===============================
+   BOTÓN PRINCIPAL
+================================ */
+.btn-primary {
+  background: #66FCF1;
+  color: #0B0C10;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  box-shadow: 0 0 16px rgba(102, 252, 241, 0.5);
+  transition: 0.25s;
+}
+
+.btn-primary:hover {
+  background: #45a29e;
+  box-shadow: 0 0 30px rgba(102, 252, 241, 0.8);
+}
+
+/* ===============================
+   GRID
+================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* ===============================
+   CARD PROMO
+================================ */
+.promo-card {
+  background: #1F2833;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+  border: 1px solid rgba(102, 252, 241, 0.25);
+  box-shadow: 0 0 15px rgba(102, 252, 241, 0.15);
+}
+
+.promo-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 20px rgba(102, 252, 241, 0.6),
+    0 0 40px rgba(102, 252, 241, 0.25);
+}
+
+/* ===============================
+   IMAGEN
+================================ */
+.promo-image {
+  width: 100%;
+  height: 190px;
+  object-fit: contain;
+  background: #0B0C10;
+  padding: 15px;
+  border-bottom: 1px solid rgba(102, 252, 241, 0.15);
+}
+
+/* ===============================
+   DESCUENTO
+================================ */
+.discount {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #FF0080;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(255, 0, 128, 0.7);
+}
+
+/* ===============================
+   CONTENIDO CARD
+================================ */
+.promo-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.promo-body h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: #FFFFFF;
+}
+
+.promo-body p {
+  font-size: 14px;
+  color: #C5C6C7;
+}
+
+/* ===============================
+   ACCIONES CARD
+================================ */
+.promo-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+/* ===============================
+   BOTONES SECUNDARIOS
+================================ */
+.btn-edit {
+  background: transparent;
+  color: #66FCF1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #66FCF1;
+  transition: 0.25s;
+}
+
+.btn-edit:hover {
+  background: #66FCF1;
+  color: #0B0C10;
+}
+
+.btn-delete {
+  background: #dc2626;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* ===============================
+   MODAL (DARK)
+================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 12, 16, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: #1F2833;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid rgba(102, 252, 241, 0.3);
+  box-shadow:
+    0 0 25px rgba(102, 252, 241, 0.2),
+    0 0 50px rgba(102, 252, 241, 0.1);
+}
+
+/* ===============================
+   FORMULARIO
+================================ */
+.modal-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.modal-form label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #C5C6C7;
+}
+
+.modal-form input,
+.modal-form select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(102, 252, 241, 0.3);
+  background: #0B0C10;
+  color: white;
+}
+
+.modal-form input:focus,
+.modal-form select:focus {
+  outline: none;
+  border-color: #66FCF1;
+  box-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
+}
+
+/* ===============================
+   ACCIONES MODAL
+================================ */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid #66FCF1;
+  color: #66FCF1;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.btn-save {
+  background: #66FCF1;
+  color: #0B0C10;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
 }
