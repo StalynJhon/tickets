@@ -248,7 +248,6 @@ app.use((req, res, next) => {
 
 // ==================== RUTAS API ====================
 // Importar y configurar rutas como API
-app.use(require('../src/infrastructure/http/router/index'))
 app.use('/pagina', require('../src/infrastructure/http/router/pagina.router'))
 app.use('/auth', require('../src/infrastructure/http/router/auth.router'));
 app.use('/rol', require('../src/infrastructure/http/router/rol.router'));
@@ -269,6 +268,8 @@ app.use('/country', require('../src/infrastructure/http/router/country.router'))
 app.use('/staff', require('../src/infrastructure/http/router/staff.router'));
 app.use('/promotions', require('../src/infrastructure/http/router/promotions.router'));
 app.use('/configuracion', require('../src/infrastructure/http/router/configuracion.router'));
+
+app.use(require('../src/infrastructure/http/router/index'))
 
 // Configurar variables globales
 app.use((req, res, next) => {
