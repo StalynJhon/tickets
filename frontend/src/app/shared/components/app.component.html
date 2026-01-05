@@ -3,15 +3,63 @@
   <aside class="sidebar">
     <nav>
       <ul>
-        <li><a href="#" (click)="irDashboard($event)">Inicio</a></li>
-        <li><a href="#" (click)="irClientes($event)">Gestionar Clientes</a></li>
-        <li><a href="#" (click)="irEventos($event)">Eventos</a></li>
+        <li>
+          <a
+            routerLink="/dashboard"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Inicio
+          </a>
+        </li>
 
-        <li><a href="#" (click)="irPromociones($event)">Gestionar Promociones</a></li>
-        <li><a href="#" (click)="irConfiguracion($event)">Configuración</a></li>
+        <li>
+          <a routerLink="/clientes" routerLinkActive="active">
+            Gestionar Clientes
+          </a>
+        </li>
 
-        <li><a routerLink="/movies">Gestionar Películas</a></li>
-        <li><a routerLink="/categorias">Gestionar Categorías</a></li>
+        <li>
+          <a routerLink="/eventos" routerLinkActive="active">
+            Eventos
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/promociones" routerLinkActive="active">
+            Gestionar Promociones
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/configuracion" routerLinkActive="active">
+            Configuración
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/movies" routerLinkActive="active">
+            Gestionar Películas
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/categorias" routerLinkActive="active">
+            Gestionar Categorías
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/products" routerLinkActive="active">
+            Gestionar Productos
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/transport" routerLinkActive="active">
+            Gestionar Transporte
+          </a>
+        </li>
       </ul>
     </nav>
   </aside>

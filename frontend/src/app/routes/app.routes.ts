@@ -13,8 +13,14 @@ import { ConfiguracionGeneralComponent } from '../features/configuracion/pages/c
 import { MovieListComponent } from '../features/movies/pages/movie-list/movie-list.component';
 import { MovieFormComponent } from '../features/movies/forms/movie-form/movie-form.component';
 
-//Categoria
+/* Categorías */
 import { CategoriaComponent } from '../features/categoria/pages/categoria.component';
+
+/* Products */
+import { ProductsListComponent } from '../features/products/pages/products-list.component';
+
+/* Transport */
+import { TransportRoutesComponent } from '../features/transport/pages/transport-routes.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -23,11 +29,11 @@ export const routes: Routes = [
   // Dashboard
   { path: 'dashboard', component: DashboardComponent },
 
-  // Eventos
-  { path: 'eventos', component: EventosComponent },
-
   // Clientes
   { path: 'clientes', component: ClienteListComponent },
+
+  // Eventos
+  { path: 'eventos', component: EventosComponent },
 
   // Promociones
   { path: 'promociones', component: PromocionesComponent },
@@ -40,8 +46,17 @@ export const routes: Routes = [
   { path: 'movies/new', component: MovieFormComponent },
   { path: 'movies/edit/:id', component: MovieFormComponent },
 
-  // Categorias
+  // Categorías
   { path: 'categorias', component: CategoriaComponent },
+
+  // Products
+  { path: 'products', component: ProductsListComponent },
+  { path: 'products/new', component: ProductsListComponent },
+  { path: 'products/edit/:id', component: ProductsListComponent },
+
+  // Transport
+  { path: 'transport', component: TransportRoutesComponent },
+  { path: 'transport/rutas', component: TransportRoutesComponent },
 
   // Cualquier ruta inválida
   { path: '**', redirectTo: 'dashboard' }
