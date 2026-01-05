@@ -3,11 +3,9 @@ const mongoose = require('mongoose');
 const systemSettingsSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['theme', 'typography', 'general', 'business', 'payment', 'legal'],
+        enum: ['theme', 'typography', 'general', 'business', 'payment'],
         required: true
     },
-    nombreComercial: String,
-    logo: String,
     colors: {
         primary: String,
         secondary: String,
@@ -25,11 +23,6 @@ const systemSettingsSchema = new mongoose.Schema({
         success: String,
         error: String,
         warning: String
-    },
-    contactInfo: {
-        email: String,
-        telefono: String,
-        direccion: String
     },
     typography: {
         primary: String,
@@ -62,9 +55,7 @@ const systemSettingsSchema = new mongoose.Schema({
         maxSeatsPerReservation: Number,
         allowGuestReservations: Boolean,
         requireEmailVerification: Boolean,
-        enableLoyaltyProgram: Boolean,
-        enableTransport: Boolean,
-        enableProducts: Boolean
+        enableLoyaltyProgram: Boolean
     },
     paymentConfig: {
         enabledMethods: [String],
@@ -72,9 +63,6 @@ const systemSettingsSchema = new mongoose.Schema({
         enableRefunds: Boolean,
         refundPolicyDays: Number
     },
-    terms: String,
-    privacy: String,
-    purchaseMessages: String,
     active: {
         type: Boolean,
         default: true

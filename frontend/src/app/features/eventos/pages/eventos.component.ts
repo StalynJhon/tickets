@@ -18,8 +18,8 @@ import Swal from 'sweetalert2';
 })
 export class EventosComponent implements OnInit {
 
-  conciertos: any[] = [];
-  todosLosConciertos: any[] = [];
+  peliculas: any[] = [];
+  todasLasPeliculas: any[] = [];
   form!: FormGroup;
   terminoBusqueda: string = '';
 
@@ -45,33 +45,33 @@ export class EventosComponent implements OnInit {
       imageUrl: ['']
     });
 
-    this.cargarConciertos();
+    this.cargarPeliculas();
   }
 
-  // 🎬 Listar solo conciertos
-  cargarConciertos() {
+  // 🎬 Listar solo películas
+  cargarPeliculas() {
     this.eventosService.getEventos().subscribe({
       next: (res: any[]) => {
-        this.conciertos = res.filter(e => e.eventType === 'concert');
-        this.todosLosConciertos = [...this.conciertos];
+        this.peliculas = res.filter(e => e.eventType === 'cinema');
+        this.todasLasPeliculas = [...this.peliculas];
       },
       error: () => {
-        Swal.fire('Error', 'No se pudieron cargar los conciertos', 'error');
+        Swal.fire('Error', 'No se pudieron cargar las películas', 'error');
       }
     });
   }
 
-  // 🔍 Buscar conciertos
-  buscarConciertos(event: any) {
+  // 🔍 Buscar películas
+  buscarPeliculas(event: any) {
     const termino = this.terminoBusqueda.toLowerCase().trim();
     
     if (!termino) {
-      this.conciertos = [...this.todosLosConciertos];
+      this.peliculas = [...this.todasLasPeliculas];
       return;
     }
-
-    this.conciertos = this.todosLosConciertos.filter(concierto => 
-      concierto.nameEvent.toLowerCase().includes(termino)
+    
+    this.peliculas = this.todasLasPeliculas.filter(pelicula => 
+      pelicula.nameEvent.toLowerCase().includes(termino)
     );
   }
 
@@ -97,19 +97,19 @@ export class EventosComponent implements OnInit {
 
     const payload = {
       ...this.form.value,
-      eventType: 'concert'
+      eventType: 'cinema'
     };
 
     if (this.editando) {
       this.eventosService.actualizarEvento(this.eventoId, payload)
         .subscribe({
           next: () => {
-            Swal.fire('Actualizado', 'el concierto fue actualizado correctamente', 'success');
+            Swal.fire('Actualizado', 'La película fue actualizada correctamente', 'success');
             this.cerrarFormulario();
-            this.cargarConciertos();
+            this.cargarPeliculas();
           },
           error: () => {
-            Swal.fire('Error', 'No se pudo actualizar el concierto', 'error');
+            Swal.fire('Error', 'No se pudo actualizar la película', 'error');
           }
         });
 
@@ -117,41 +117,41 @@ export class EventosComponent implements OnInit {
       this.eventosService.crearEvento(payload)
         .subscribe({
           next: (response: any) => {
-            Swal.fire('Concierto creado', 'El concierto se creó correctamente', 'success');
+            Swal.fire('Película creada', 'La película se creó correctamente', 'success');
             this.cerrarFormulario();
-            // Agregar el nuevo concierto al array sin recargar
-            const nuevoConcierto = { ...payload, idEvent: response.idEvent };
-            this.conciertos.push(nuevoConcierto);
-            this.todosLosConciertos.push(nuevoConcierto);
+            // Agregar la nueva película al array sin recargar
+            const nuevaPelicula = { ...payload, idEvent: response.idEvent };
+            this.peliculas.push(nuevaPelicula);
+            this.todasLasPeliculas.push(nuevaPelicula);
           },
           error: () => {
-            Swal.fire('Error', 'No se pudo crear el concierto', 'error');
+            Swal.fire('Error', 'No se pudo crear la película', 'error');
           }
         });
     }
   }
 
   // ✏️ Editar
-  editar(concierto: any) {
+  editar(pelicula: any) {
     this.editando = true;
-    this.eventoId = concierto.idEvent;
+    this.eventoId = pelicula.idEvent;
     this.mostrarFormulario = true;
 
     this.form.patchValue({
-      nameEvent: concierto.nameEvent,
-      descriptionEvent: concierto.descriptionEvent,
-      microserviceEventId: concierto.microserviceEventId,
-      venue: concierto.venue,
-      dateTimeEvent: concierto.dateTimeEvent,
-      capacity: concierto.capacity,
-      imageUrl: concierto.imageUrl
+      nameEvent: pelicula.nameEvent,
+      descriptionEvent: pelicula.descriptionEvent,
+      microserviceEventId: pelicula.microserviceEventId,
+      venue: pelicula.venue,
+      dateTimeEvent: pelicula.dateTimeEvent,
+      capacity: pelicula.capacity,
+      imageUrl: pelicula.imageUrl
     });
   }
 
   // 🗑️ Eliminar (cancelar evento)
   eliminar(id: number) {
     Swal.fire({
-      title: '¿Eliminar concierto?',
+      title: '¿Eliminar película?',
       text: 'Esta acción cancelará el evento',
       icon: 'warning',
       showCancelButton: true,
@@ -162,13 +162,13 @@ export class EventosComponent implements OnInit {
         this.eventosService.eliminarEvento(id)
           .subscribe({
             next: () => {
-              Swal.fire('Eliminado', 'El concierto fue eliminado', 'success');
-              // Eliminar el concierto del array sin recargar
-              this.conciertos = this.conciertos.filter(c => c.idEvent !== id);
-              this.todosLosConciertos = this.todosLosConciertos.filter(c => c.idEvent !== id);
+              Swal.fire('Eliminado', 'La película fue eliminada', 'success');
+              // Eliminar la película del array sin recargar
+              this.peliculas = this.peliculas.filter(p => p.idEvent !== id);
+              this.todasLasPeliculas = this.todasLasPeliculas.filter(p => p.idEvent !== id);
             },
             error: () => {
-              Swal.fire('Error', 'No se pudo eliminar el concierto', 'error');
+              Swal.fire('Error', 'No se pudo eliminar la película', 'error');
             }
           });
       }
