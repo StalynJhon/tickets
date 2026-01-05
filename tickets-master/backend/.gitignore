@@ -1,6 +1,0 @@
-node_modules
-/nbproject/private/
-combined.log
-error.log
-
-src/logs/app.log 
