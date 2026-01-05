@@ -20,8 +20,10 @@ export class EventosComponent implements OnInit {
 
   peliculas: any[] = [];
   todasLasPeliculas: any[] = [];
+  peliculasFiltradas: any[] = [];
   form!: FormGroup;
   terminoBusqueda: string = '';
+  filtroActual: string = 'todos';
 
   editando = false;
   eventoId!: number;
@@ -54,6 +56,7 @@ export class EventosComponent implements OnInit {
       next: (res: any[]) => {
         this.peliculas = res.filter(e => e.eventType === 'cinema');
         this.todasLasPeliculas = [...this.peliculas];
+        this.peliculasFiltradas = [...this.peliculas];
       },
       error: () => {
         Swal.fire('Error', 'No se pudieron cargar las películas', 'error');
@@ -67,12 +70,37 @@ export class EventosComponent implements OnInit {
     
     if (!termino) {
       this.peliculas = [...this.todasLasPeliculas];
+      this.filtrarPeliculas();
       return;
     }
     
     this.peliculas = this.todasLasPeliculas.filter(pelicula => 
       pelicula.nameEvent.toLowerCase().includes(termino)
     );
+    this.filtrarPeliculas();
+  }
+
+  // Métodos para búsqueda y filtrado
+  aplicarFiltro(filtro: string): void {
+    this.filtroActual = filtro;
+    this.filtrarPeliculas();
+  }
+
+  filtrarPeliculas(): void {
+    let peliculasFiltradas = [...this.peliculas];
+
+    // Aplicar filtro por tipo de evento
+    if (this.filtroActual !== 'todos') {
+      if (this.filtroActual === 'cine') {
+        peliculasFiltradas = peliculasFiltradas.filter(pelicula => pelicula.eventType === 'cinema');
+      } else if (this.filtroActual === 'conciertos') {
+        peliculasFiltradas = peliculasFiltradas.filter(pelicula => pelicula.eventType === 'concert');
+      } else if (this.filtroActual === 'otros') {
+        peliculasFiltradas = peliculasFiltradas.filter(pelicula => pelicula.eventType !== 'cinema' && pelicula.eventType !== 'concert');
+      }
+    }
+
+    this.peliculasFiltradas = peliculasFiltradas;
   }
 
   // ➕ Abrir formulario (Agregar)
@@ -123,6 +151,7 @@ export class EventosComponent implements OnInit {
             const nuevaPelicula = { ...payload, idEvent: response.idEvent };
             this.peliculas.push(nuevaPelicula);
             this.todasLasPeliculas.push(nuevaPelicula);
+            this.filtrarPeliculas();
           },
           error: () => {
             Swal.fire('Error', 'No se pudo crear la película', 'error');
@@ -166,6 +195,7 @@ export class EventosComponent implements OnInit {
               // Eliminar la película del array sin recargar
               this.peliculas = this.peliculas.filter(p => p.idEvent !== id);
               this.todasLasPeliculas = this.todasLasPeliculas.filter(p => p.idEvent !== id);
+              this.filtrarPeliculas();
             },
             error: () => {
               Swal.fire('Error', 'No se pudo eliminar la película', 'error');

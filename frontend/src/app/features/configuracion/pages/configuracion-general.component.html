@@ -1,22 +1,35 @@
-<div class="configuracion-container">
-  <div class="header">
-    <h2>Configuración General de la Plataforma</h2>
+<div class="configuracion-layout">
+
+  <!-- HERO HEADER -->
+  <div class="hero-header">
+    <h1>Configuración General</h1>
     <p class="subtitle">Gestiona todos los parámetros de tu plataforma desde un solo lugar</p>
+    
+    <!-- Search/Filtro Bar -->
+    <div class="search-filtro-bar">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Buscar configuración..." [(ngModel)]="terminoBusqueda" (input)="buscarConfiguracion()">
+        <i class="search-icon">🔍</i>
+      </div>
+      <div class="filtro-options">
+        <button class="filtro-btn" [class.active]="filtroActual === 'todas'" (click)="aplicarFiltro('todas')">Todas</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'plataforma'" (click)="aplicarFiltro('plataforma')">Plataforma</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'negocio'" (click)="aplicarFiltro('negocio')">Negocio</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'legales'" (click)="aplicarFiltro('legales')">Legal</button>
+      </div>
+    </div>
   </div>
 
   <form (ngSubmit)="guardarConfiguracion()" #configForm="ngForm" class="config-form">
-    <!-- Parámetros de la Plataforma Card -->
-    <div class="card">
-      <div class="card-header">
-        <h3>
-          <i class="icon-settings"></i>
-          Parámetros de la Plataforma
-        </h3>
-        <div class="card-toggle" (click)="toggleSection('plataforma')">
+    <!-- ================= PLATAFORMA ================= -->
+    <div class="config-card" *ngIf="mostrarSeccion('plataforma')">
+      <div class="card-header" (click)="toggleSection('plataforma')">
+        <h3><i class="icon-settings"></i> Parámetros de la Plataforma</h3>
+        <div class="card-toggle">
           <i [class]="getSectionIcon('plataforma')"></i>
         </div>
       </div>
-      
+
       <div class="card-content" [class.expanded]="isSectionExpanded('plataforma')">
         <div class="form-grid">
           <div class="form-group">
@@ -124,18 +137,15 @@
       </div>
     </div>
 
-    <!-- Textos Legales Card -->
-    <div class="card">
-      <div class="card-header">
-        <h3>
-          <i class="icon-document"></i>
-          Textos Legales Configurables
-        </h3>
-        <div class="card-toggle" (click)="toggleSection('legales')">
+    <!-- ================= LEGALES ================= -->
+    <div class="config-card" *ngIf="mostrarSeccion('legales')">
+      <div class="card-header" (click)="toggleSection('legales')">
+        <h3><i class="icon-document"></i> Textos Legales</h3>
+        <div class="card-toggle">
           <i [class]="getSectionIcon('legales')"></i>
         </div>
       </div>
-      
+
       <div class="card-content" [class.expanded]="isSectionExpanded('legales')">
         <div class="form-grid">
           <div class="form-group full-width">
@@ -177,18 +187,15 @@
       </div>
     </div>
 
-    <!-- Configuración de Negocio Card -->
-    <div class="card">
-      <div class="card-header">
-        <h3>
-          <i class="icon-business"></i>
-          Configuración de Negocio
-        </h3>
-        <div class="card-toggle" (click)="toggleSection('negocio')">
+    <!-- ================= NEGOCIO ================= -->
+    <div class="config-card" *ngIf="mostrarSeccion('negocio')">
+      <div class="card-header" (click)="toggleSection('negocio')">
+        <h3><i class="icon-business"></i> Configuración de Negocio</h3>
+        <div class="card-toggle">
           <i [class]="getSectionIcon('negocio')"></i>
         </div>
       </div>
-      
+
       <div class="card-content" [class.expanded]="isSectionExpanded('negocio')">
         <div class="form-grid">
           <div class="form-group">
@@ -247,9 +254,9 @@
       </div>
     </div>
 
+    <!-- ================= BOTÓN ================= -->
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary" [disabled]="!configForm.form.valid">
-        <i class="icon-save"></i>
+      <button type="submit" class="btn btn-primary">
         Guardar Configuración
       </button>
     </div>
