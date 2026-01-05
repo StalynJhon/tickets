@@ -1,0 +1,61 @@
+<div class="clientes-container">
+
+  <div class="header">
+    <h2>Gestión de Clientes</h2>
+
+    <button class="btn-crear" (click)="crear()">
+      ➕ Crear cliente
+    </button>
+  </div>
+
+  <!-- Buscador -->
+  <input
+    type="text"
+    class="buscador"
+    placeholder="Buscar por nombre, email o documento..."
+    [(ngModel)]="filtro"
+    (input)="filtrar()"
+  />
+
+  <!-- Tabla -->
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Documento</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let cliente of clientesFiltrados">
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.documento }}</td>
+        <td>
+          <span [class.activo]="cliente.activo">
+            {{ cliente.activo ? 'ACTIVO' : 'INACTIVO' }}
+          </span>
+        </td>
+        <td class="acciones">
+          <button class="btn-editar" (click)="editar(cliente.id)">
+            ✏️ Editar
+          </button>
+
+          <button class="btn-estado" (click)="cambiarEstado(cliente)">
+            🔄 Estado
+          </button>
+
+          <button class="btn-eliminar" (click)="eliminar(cliente)">
+            🗑️ Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
