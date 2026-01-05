@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../services/categoria.service';
+<<<<<<< HEAD
 import { CategoriaEvento } from '../../models/categoria.model';
+=======
+import { CategoriaEvento } from '../../models/categoria.models';
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
 
 @Component({
   selector: 'app-categoria-form',
@@ -103,6 +107,10 @@ import { CategoriaEvento } from '../../models/categoria.model';
     }
   `]
 })
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
 export class CategoriaFormComponent implements OnInit {
   categoria: CategoriaEvento = { id: 0, nombre: '', descripcion: '', estado: true };
   esEdicion = false;
@@ -113,6 +121,7 @@ export class CategoriaFormComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
+<<<<<<< HEAD
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
     if (id) {
@@ -141,3 +150,52 @@ export class CategoriaFormComponent implements OnInit {
     this.router.navigate(['/categorias']);
   }
 }
+=======
+ ngOnInit() {
+  const id = Number(this.route.snapshot.params['id']); 
+  if (id) {
+    this.esEdicion = true;
+
+    const local = JSON.parse(localStorage.getItem('mis_categorias') || '[]');
+    const encontrada = local.find((c: any) => c.id === id);
+    
+    if (encontrada) {
+      this.categoria = { ...encontrada };
+    } else {
+
+      this.service.getById(id).subscribe(data => this.categoria = data);
+    }
+  }
+}
+
+ guardar() {
+  const local = localStorage.getItem('mis_categorias') || '[]';
+  let categorias = JSON.parse(local);
+
+  if (this.esEdicion) {
+ 
+    const index = categorias.findIndex((c: any) => c.id === this.categoria.id);
+    if (index !== -1) {
+      categorias[index] = { ...this.categoria };
+    }
+  } else {
+  
+    const nuevaCat = { ...this.categoria, id: Date.now(), estado: true };
+    categorias.push(nuevaCat);
+  }
+
+  localStorage.setItem('mis_categorias', JSON.stringify(categorias));
+
+  this.service.create(this.categoria).subscribe({
+    next: () => this.router.navigate(['/categorias']),
+    error: () => {
+      alert('Cambios guardados localmente');
+      this.router.navigate(['/categorias']);
+    }
+  });
+}
+  volver() {
+    this.router.navigate(['/categorias']);
+  }
+}
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4

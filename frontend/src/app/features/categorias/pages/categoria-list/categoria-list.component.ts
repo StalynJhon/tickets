@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 import { Component } from '@angular/core';
+=======
+import { Component, OnInit} from '@angular/core';
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../services/categoria.service';
+<<<<<<< HEAD
 import { CategoriaEvento } from '../../models/categoria.model';
+=======
+import { CategoriaEvento } from '../../models/categoria.models';
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
 
 @Component({
   selector: 'app-categoria-list',
@@ -115,15 +123,45 @@ import { CategoriaEvento } from '../../models/categoria.model';
     }
   `]
 })
+<<<<<<< HEAD
 export class CategoriaListComponent {
+=======
+export class CategoriaListComponent implements OnInit { 
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
   lista: CategoriaEvento[] = [];
   listaFiltrada: CategoriaEvento[] = [];
   filtro = '';
 
+<<<<<<< HEAD
   constructor(private service: CategoriaService, private router: Router) {
     this.service.getAll().subscribe(data => {
       this.lista = data.map(c => ({ ...c, estado: c.estado == 1 }));
       this.listaFiltrada = [...this.lista];
+=======
+  constructor(private service: CategoriaService, private router: Router) {}
+
+  ngOnInit() {
+    this.cargarDatos();
+  }
+
+  cargarDatos() {
+    this.service.getAll().subscribe({
+      next: (data) => {
+       
+        const delServidor = data.map(c => ({ ...c, estado: c.estado == 1 }));
+        
+        const local = JSON.parse(localStorage.getItem('mis_categorias') || '[]');
+        
+        this.lista = [...delServidor, ...local];
+        this.listaFiltrada = [...this.lista];
+      },
+      error: (err) => {
+        console.warn("Servidor no disponible, cargando datos locales");
+        
+        this.lista = JSON.parse(localStorage.getItem('mis_categorias') || '[]');
+        this.listaFiltrada = [...this.lista];
+      }
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
     });
   }
 
@@ -143,6 +181,7 @@ export class CategoriaListComponent {
     this.router.navigate(['/categorias/editar', id]); 
   }
 
+<<<<<<< HEAD
   alternarEstado(cat: CategoriaEvento) {
     this.service.toggleEstado(cat.id).subscribe({
       next: () => {
@@ -155,4 +194,21 @@ export class CategoriaListComponent {
       error: (err) => alert("Error: " + err.message)
     });
   }
+=======
+ alternarEstado(cat: CategoriaEvento) {
+  const local = JSON.parse(localStorage.getItem('mis_categorias') || '[]');
+  const index = local.findIndex((c: any) => c.id === cat.id);
+  
+  if (index !== -1) {
+    local[index].estado = !local[index].estado;
+    localStorage.setItem('mis_categorias', JSON.stringify(local));
+    alert(`Estado de ${cat.nombre} cambiado localmente`);
+    this.cargarDatos(); 
+  }
+
+  this.service.toggleEstado(cat.id).subscribe({
+    error: (err) => console.log('El servidor no respondió, pero el cambio local se hizo.')
+  });
+}
+>>>>>>> 8e1e18bb39aac4825265ea812680aa1d586188f4
 }
