@@ -45,6 +45,11 @@ export class ConfiguracionGeneralComponent implements OnInit {
 
   // Estados para secciones colapsables
   private expandedSections: Set<string> = new Set(['plataforma', 'legales', 'negocio']);
+  
+  // Estados para búsqueda y filtrado
+  filtroActual: string = 'todas';
+  terminoBusqueda: string = '';
+  seccionesFiltradas: string[] = ['plataforma', 'legales', 'negocio'];
 
   constructor(private configuracionService: ConfiguracionService) {}
 
@@ -154,4 +159,62 @@ export class ConfiguracionGeneralComponent implements OnInit {
   getSectionIcon(section: string): string {
     return this.isSectionExpanded(section) ? 'icon-chevron-up' : 'icon-chevron-down';
   }
+
+  // Métodos para búsqueda y filtrado
+  aplicarFiltro(filtro: string): void {
+    this.filtroActual = filtro;
+    this.filtrarSecciones();
+  }
+
+  filtrarSecciones(): void {
+    if (this.filtroActual === 'todas') {
+      this.seccionesFiltradas = ['plataforma', 'legales', 'negocio'];
+    } else {
+      this.seccionesFiltradas = [this.filtroActual];
+    }
+  }
+
+  buscarConfiguracion(): void {
+    if (this.terminoBusqueda.trim() === '') {
+      this.filtrarSecciones();
+      return;
+    }
+
+    // Filtrar secciones según el término de búsqueda
+    const secciones = ['plataforma', 'legales', 'negocio'];
+    this.seccionesFiltradas = secciones.filter(seccion => {
+      const titulo = this.getTituloSeccion(seccion).toLowerCase();
+      return titulo.includes(this.terminoBusqueda.toLowerCase());
+    });
+  }
+
+  getTituloSeccion(seccion: string): string {
+    switch (seccion) {
+      case 'plataforma':
+        return 'Parámetros de la Plataforma';
+      case 'legales':
+        return 'Textos Legales';
+      case 'negocio':
+        return 'Configuración de Negocio';
+      default:
+        return seccion;
+    }
+  }
+
+  // Verificar si una sección debe mostrarse
+  mostrarSeccion(seccion: string): boolean {
+    // Si hay término de búsqueda, solo mostrar las secciones que coincidan
+    if (this.terminoBusqueda.trim() !== '') {
+      return this.seccionesFiltradas.includes(seccion);
+    }
+    
+    // Si hay filtro activo, solo mostrar las secciones filtradas
+    if (this.filtroActual !== 'todas') {
+      return this.seccionesFiltradas.includes(seccion);
+    }
+    
+    // Mostrar todas las secciones
+    return true;
+  }
+
 }

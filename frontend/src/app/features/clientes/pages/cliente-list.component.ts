@@ -13,6 +13,9 @@ import { FormsModule } from '@angular/forms';
 export class ClienteListComponent implements OnInit {
 
   clientes: any[] = [];
+  clientesFiltrados: any[] = [];
+  filtroActual: string = 'todos';
+  terminoBusqueda: string = '';
 
   constructor(private clienteService: ClienteService) { }
 
@@ -31,6 +34,7 @@ export class ClienteListComponent implements OnInit {
           direccionCliente: cliente.detallesMongo?.direccionCliente || '',
           menu: false // 👈 aseguramos que ningún menú esté abierto
         }));
+        this.clientesFiltrados = [...this.clientes];
       },
       error: (err) => {
         console.error(err);
@@ -108,4 +112,38 @@ export class ClienteListComponent implements OnInit {
     this.eliminarCliente(cliente.idClientes);
   }
 
+  // Métodos para búsqueda y filtrado
+  aplicarFiltro(filtro: string): void {
+    this.filtroActual = filtro;
+    this.filtrarClientes();
+  }
+
+  filtrarClientes(): void {
+    let clientesFiltrados = [...this.clientes];
+
+    // Aplicar filtro por estado
+    if (this.filtroActual === 'activos') {
+      clientesFiltrados = clientesFiltrados.filter(cliente => true); // Todos los clientes están activos
+    } else if (this.filtroActual === 'inactivos') {
+      clientesFiltrados = clientesFiltrados.filter(cliente => false); // No hay clientes inactivos en este ejemplo
+    }
+
+    // Aplicar filtro de búsqueda
+    if (this.terminoBusqueda.trim() !== '') {
+      const termino = this.terminoBusqueda.toLowerCase();
+      clientesFiltrados = clientesFiltrados.filter(cliente => 
+        cliente.nombreCliente.toLowerCase().includes(termino) ||
+        cliente.cedulaCliente.toLowerCase().includes(termino) ||
+        cliente.emailCliente.toLowerCase().includes(termino) ||
+        cliente.telefonoCliente.toLowerCase().includes(termino) ||
+        cliente.direccionCliente.toLowerCase().includes(termino)
+      );
+    }
+
+    this.clientesFiltrados = clientesFiltrados;
+  }
+
+  buscarClientes(): void {
+    this.filtrarClientes();
+  }
 }

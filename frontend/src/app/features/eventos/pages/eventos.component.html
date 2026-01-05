@@ -1,70 +1,73 @@
-<header class="topbar">
-<h2>EVENTOS</h2>
-<span class="user">Administrador<br> Miguel Morales</span>
-</header>
-
-<div class="catalog-container">
-  <div class="catalog-header">
-    <div class="search-section">
-      <input
-        type="text"
-        placeholder="Buscar eventos..."
-        class="search-input"
-        (keyup.enter)="buscarPeliculas($event)"
-        [(ngModel)]="terminoBusqueda"
-      />
-      <div class="badge-container">
-        <span class="badge">Función cine</span>
-      </div>
-    </div>
+<!-- HERO HEADER -->
+<div class="configuracion-layout">
+  <div class="hero-header">
+    <h1>Eventos y Conciones</h1>
+    <p class="subtitle">Gestiona todos los eventos y conciertos disponibles en la plataforma</p>
     
-    <div class="header-actions">
-      <button class="btn btn-add" (click)="abrirFormulario()">Agregar película</button>
+    <!-- Search/Filtro Bar -->
+    <div class="search-filtro-bar">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Buscar eventos..." [(ngModel)]="terminoBusqueda" (input)="buscarPeliculas($event)">
+        <i class="search-icon">🔍</i>
+      </div>
+      <div class="filtro-options">
+        <button class="filtro-btn" [class.active]="filtroActual === 'todos'" (click)="aplicarFiltro('todos')">Todos</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'cine'" (click)="aplicarFiltro('cine')">Cine</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'conciertos'" (click)="aplicarFiltro('conciertos')">Conciertos</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'otros'" (click)="aplicarFiltro('otros')">Otros</button>
+      </div>
     </div>
   </div>
-  
-  <div class="cards-grid">
-    <div class="card" *ngFor="let p of peliculas">
-      <img [src]="p.imageUrl" alt="{{ p.nameEvent }}" />
-      <div class="card-content">
-        <h4>{{ p.nameEvent }}</h4>
-        <div class="card-details-section">
-          <p class="card-field" *ngIf="p.descriptionEvent"><strong>Descripción:</strong> {{ p.descriptionEvent }}</p>
-          <p class="card-field" *ngIf="p.microserviceEventId"><strong>Género:</strong> {{ p.microserviceEventId }}</p>
-          <p class="card-field" *ngIf="p.venue"><strong>Lugar:</strong> {{ p.venue }}</p>
-          <p class="card-field" *ngIf="p.dateTimeEvent"><strong>Fecha:</strong> {{ p.dateTimeEvent | date:'short' }}</p>
-          <p class="card-field" *ngIf="p.capacity !== undefined && p.capacity !== null"><strong>Capacidad:</strong> {{ p.capacity }}</p>
+
+  <!-- EVENTOS CARDS -->
+  <div class="config-form">
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="abrirFormulario()">Agregar evento</button>
+    </div>
+    
+    <div class="cards-grid">
+      <div class="config-card" *ngFor="let p of peliculasFiltradas">
+        <img [src]="p.imageUrl" alt="{{ p.nameEvent }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 20px 20px 0 0;" />
+        <div class="card-content" style="padding: 25px;">
+          <h4>{{ p.nameEvent }}</h4>
+          <div class="card-details-section">
+            <p class="card-field" *ngIf="p.descriptionEvent"><strong>Descripción:</strong> {{ p.descriptionEvent }}</p>
+            <p class="card-field" *ngIf="p.microserviceEventId"><strong>Género:</strong> {{ p.microserviceEventId }}</p>
+            <p class="card-field" *ngIf="p.venue"><strong>Lugar:</strong> {{ p.venue }}</p>
+            <p class="card-field" *ngIf="p.dateTimeEvent"><strong>Fecha:</strong> {{ p.dateTimeEvent | date:'short' }}</p>
+            <p class="card-field" *ngIf="p.capacity !== undefined && p.capacity !== null"><strong>Capacidad:</strong> {{ p.capacity }}</p>
+          </div>
+          <div class="card-details">
+            <span class="card-badge" *ngIf="p.eventType" style="display: inline-block; padding: 6px 12px; background: #e0f2fe; color: #0369a1; border-radius: 6px; font-size: 0.85rem; font-weight: 500;">{{ p.eventType === 'cinema' ? 'Función cine' : p.eventType }}</span>
+          </div>
         </div>
-        <div class="card-details">
-          <span class="card-badge" *ngIf="p.eventType">{{ p.eventType === 'cinema' ? 'Función cine' : p.eventType }}</span>
+        <div class="card-actions" style="padding: 15px 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; justify-content: flex-end;">
+          <button class="btn btn-primary btn-edit-card" (click)="editar(p)">Editar</button>
+          <button class="btn btn-cancelar btn-delete-card" (click)="eliminar(p.idEvent)">Eliminar</button>
         </div>
-      </div>
-      <div class="card-actions">
-        <button class="btn-card-action btn-edit-card" (click)="editar(p)">Editar</button>
-        <button class="btn-card-action btn-delete-card" (click)="eliminar(p.idEvent)">Eliminar</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- MODAL CRUD -->
-<div class="modal" *ngIf="mostrarFormulario">
-<div class="modal-content">
-<h3>{{ editando ? 'Editar película' : 'Nueva película' }}</h3>
+<div class="modal-backdrop" *ngIf="mostrarFormulario">
+  <div class="modal">
+    <h2>{{ editando ? 'Editar evento' : 'Nuevo evento' }}</h2>
 
-<form [formGroup]="form" (ngSubmit)="guardar()">
-<input formControlName="nameEvent" placeholder="Título" />
-<textarea formControlName="descriptionEvent" placeholder="Descripción"></textarea>
-<input formControlName="microserviceEventId" placeholder="Género" />
-<input formControlName="venue" placeholder="Lugar" />
-<input type="datetime-local" formControlName="dateTimeEvent" />
-<input type="number" formControlName="capacity" placeholder="Capacidad" />
-<input formControlName="imageUrl" placeholder="Imagen URL" />
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <input formControlName="nameEvent" placeholder="Título" class="form-control" />
+      <textarea formControlName="descriptionEvent" placeholder="Descripción" class="form-control" style="min-height: 100px;"></textarea>
+      <input formControlName="microserviceEventId" placeholder="Género" class="form-control" />
+      <input formControlName="venue" placeholder="Lugar" class="form-control" />
+      <input type="datetime-local" formControlName="dateTimeEvent" class="form-control" />
+      <input type="number" formControlName="capacity" placeholder="Capacidad" class="form-control" />
+      <input formControlName="imageUrl" placeholder="Imagen URL" class="form-control" />
 
-<div class="modal-actions">
-<button type="submit">Guardar</button>
-<button type="button" (click)="cerrarFormulario()">Cancelar</button>
-</div>
-</form>
-</div>
+      <div class="modal-actions" style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+      </div>
+    </form>
+  </div>
 </div>

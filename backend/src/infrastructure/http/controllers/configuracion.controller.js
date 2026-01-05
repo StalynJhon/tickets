@@ -2,7 +2,9 @@ const SystemSettings = require('../../../domain/models/systemSettings');
 const EventSettings = require('../../../domain/models/eventSettings');
 const { DataTypes, Op } = require('sequelize');
 const dbConnection = require('../../database/connection/dataBase.orm');
-const Configuracion = dbConnection.configuracion;
+
+// Importar el modelo Configuracion directamente
+const { Configuracion } = dbConnection;
 
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {
