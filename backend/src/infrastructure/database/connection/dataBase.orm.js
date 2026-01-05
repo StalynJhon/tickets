@@ -47,15 +47,10 @@ sequelize.authenticate()
     });
 
 // Sincronización de la base de datos
-const syncOptions = process.env.NODE_ENV === 'development' ? { force: true } : { alter: true };
+sequelize.sync({ logging: false })
+    .then(() => console.log("✔ Modelos listos"))
+    .catch((err) => console.error("❌ Error:", err.message));
 
-sequelize.sync(syncOptions)
-    .then(() => {
-        console.log('Base de Datos sincronizadas');
-    })
-    .catch((error) => {
-        console.error('Error al sincronizar la Base de Datos:', error);
-    });
 
 //extracionModelos
 const usuarioModel = require('../sql/usuario')

@@ -1,10 +1,20 @@
 const promotionsCtl = {};
 const orm = require('../../../infrastructure/database/connection/dataBase.orm');
 const sql = require('../../../infrastructure/database/connection/dataBase.sql');
+const { cifrarDatos, descifrarDatos } = require('../../../application/encrypDates');
+
+// 🔐 DESCIFRADO SEGURO (OBLIGATORIO)
+const descifrarSeguro = (dato) => {
+    try {
+        return dato ? descifrarDatos(dato) : '';
+    } catch (error) {
+        return dato; // fallback: devuelve el valor original
+    }
+};
 
 // ================= PROMOCIONES =================
 
-// Mostrar todas las promociones activas
+// Mostrar promociones activas
 promotionsCtl.mostrarPromociones = async (req, res) => {
     try {
         const [promociones] = await sql.promise().query(`
@@ -14,7 +24,13 @@ promotionsCtl.mostrarPromociones = async (req, res) => {
             ORDER BY startDate DESC
         `);
 
-        return res.json(promociones);
+        const promocionesDescifradas = promociones.map(promo => ({
+            ...promo,
+            namePromotion: descifrarSeguro(promo.namePromotion),
+            promoCode: descifrarSeguro(promo.promoCode)
+        }));
+
+        return res.json(promocionesDescifradas);
     } catch (error) {
         return res.status(500).json({
             message: 'Error al obtener promociones',
@@ -40,7 +56,6 @@ promotionsCtl.crearPromocion = async (req, res) => {
             minPurchase
         } = req.body;
 
-        // Validaciones obligatorias según tabla
         if (!namePromotion || !typePromotion || !startDate || !endDate) {
             return res.status(400).json({
                 message: 'Todos los campos obligatorios deben ser enviados'
@@ -54,17 +69,21 @@ promotionsCtl.crearPromocion = async (req, res) => {
         }
 
         const nuevaPromocion = await orm.Promotion.create({
-            namePromotion,
+            // 🔐 CIFRADO SOLO TEXTO
+            namePromotion: cifrarDatos(namePromotion),
+            promoCode: promoCode ? cifrarDatos(promoCode) : null,
+
+            // ❌ NO CIFRAR
             typePromotion,
             discountType,
             discountValue,
-            promoCode,
-            eventId,
-            productId,
+            eventId: eventId || null,
+            productId: productId || null,
             startDate,
             endDate,
             maxQuota,
             minPurchase,
+
             statePromotion: true,
             createPromotion: new Date().toLocaleString()
         });
@@ -113,10 +132,10 @@ promotionsCtl.actualizarPromocion = async (req, res) => {
         await sql.promise().query(`
             UPDATE promotions SET
                 namePromotion = ?,
+                promoCode = ?,
                 typePromotion = ?,
                 discountType = ?,
                 discountValue = ?,
-                promoCode = ?,
                 eventId = ?,
                 productId = ?,
                 startDate = ?,
@@ -126,13 +145,13 @@ promotionsCtl.actualizarPromocion = async (req, res) => {
                 updatePromotion = ?
             WHERE idPromotion = ?
         `, [
-            namePromotion,
+            cifrarDatos(namePromotion),
+            promoCode ? cifrarDatos(promoCode) : null,
             typePromotion,
             discountType,
             discountValue,
-            promoCode,
-            eventId,
-            productId,
+            eventId || null,
+            productId || null,
             startDate,
             endDate,
             maxQuota,
@@ -151,7 +170,7 @@ promotionsCtl.actualizarPromocion = async (req, res) => {
     }
 };
 
-// Eliminar (desactivar) promoción
+// Eliminar promoción (soft delete)
 promotionsCtl.eliminarPromocion = async (req, res) => {
     try {
         const { id } = req.params;
@@ -182,7 +201,13 @@ promotionsCtl.obtenerPromocionesVigentes = async (req, res) => {
             ORDER BY discountValue DESC
         `);
 
-        return res.json(promociones);
+        const promocionesDescifradas = promociones.map(promo => ({
+            ...promo,
+            namePromotion: descifrarSeguro(promo.namePromotion),
+            promoCode: descifrarSeguro(promo.promoCode)
+        }));
+
+        return res.json(promocionesDescifradas);
 
     } catch (error) {
         return res.status(500).json({
