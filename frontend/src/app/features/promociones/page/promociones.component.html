@@ -2,9 +2,9 @@
 
   <!-- HEADER -->
   <header class="topbar">
-<h2>PROMOCIONES</h2>
-<span class="user">Administrador<br> Miguel Morales</span>
-</header>
+    <h2>PROMOCIONES</h2>
+    <span class="user">Administrador<br> Miguel Morales</span>
+  </header>
 
   <!-- CONTENEDOR BLANCO -->
   <div class="card-container">
@@ -95,17 +95,46 @@
 
       <div>
         <label>Valor del descuento</label>
-        <input type="number" [(ngModel)]="form.discountValue" name="discountValue">
+        <input
+          type="number"
+          [(ngModel)]="form.discountValue"
+          name="discountValue">
+      </div>
+
+      <!-- ✅ COMPRA MÍNIMA -->
+      <div>
+        <label>Compra mínima</label>
+        <input
+          type="number"
+          [(ngModel)]="form.minPurchase"
+          name="minPurchase"
+          min="0">
+      </div>
+
+      <!-- ✅ CUPO MÁXIMO -->
+      <div>
+        <label>Cupo máximo</label>
+        <input
+          type="number"
+          [(ngModel)]="form.maxQuota"
+          name="maxQuota"
+          min="0">
       </div>
 
       <div>
         <label>Fecha inicio *</label>
-        <input type="date" [(ngModel)]="form.startDate" name="startDate">
+        <input
+          type="date"
+          [(ngModel)]="form.startDate"
+          name="startDate">
       </div>
 
       <div>
         <label>Fecha fin *</label>
-        <input type="date" [(ngModel)]="form.endDate" name="endDate">
+        <input
+          type="date"
+          [(ngModel)]="form.endDate"
+          name="endDate">
       </div>
 
     </form>
