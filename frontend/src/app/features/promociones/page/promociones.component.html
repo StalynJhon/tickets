@@ -1,15 +1,24 @@
 <!-- HERO HEADER -->
 <div class="configuracion-layout">
+
   <div class="hero-header">
     <h1>Promociones y Descuentos</h1>
-    <p class="subtitle">Gestiona todas las promociones y descuentos disponibles en la plataforma</p>
-    
-    <!-- Search/Filtro Bar -->
+    <p class="subtitle">
+      Gestiona todas las promociones y descuentos disponibles en la plataforma
+    </p>
+
+    <!-- Search / Filtros -->
     <div class="search-filtro-bar">
       <div class="search-container">
-        <input type="text" class="search-input" placeholder="Buscar promociones..." [(ngModel)]="terminoBusqueda" (input)="buscarPromociones()">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar promociones..."
+          [(ngModel)]="terminoBusqueda"
+          (input)="buscarPromociones()">
         <i class="search-icon">🔍</i>
       </div>
+
       <div class="filtro-options">
         <button class="filtro-btn" [class.active]="filtroActual === 'todas'" (click)="aplicarFiltro('todas')">Todas</button>
         <button class="filtro-btn" [class.active]="filtroActual === 'codigo'" (click)="aplicarFiltro('codigo')">Código</button>
@@ -19,187 +28,104 @@
     </div>
   </div>
 
-  <!-- PROMOCIONES CARDS -->
-  <div class="config-form">
-    <div class="header-actions">
-      <button class="btn btn-primary" (click)="abrirCrear()">Agregar promoción</button>
-    </div>
-    
-    <div class="cards-grid">
-      <div class="config-card" *ngFor="let promo of promocionesFiltradas">
-        <!-- Imagen -->
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCGZlr4gLcP_lnP-wXWHiXholmsGihWJOqfA&s"
-          alt="Promoción"
-          class="card-image"
-          style="width: 100%; height: 200px; object-fit: cover; border-radius: 20px 20px 0 0;"
-        >
+  <!-- BOTÓN -->
+  <div class="header-actions">
+    <button class="btn btn-primary" (click)="abrirCrear()">
+      + Agregar promoción
+    </button>
+  </div>
 
-        <!-- Descuento -->
-        <span
-          class="descuento-badge"
-          style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; font-size: 0.85rem; font-weight: 600; padding: 6px 12px; border-radius: 20px; z-index: 10; box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);">
-          -{{ promo.discountValue }}%
+  <!-- GRID PROMOCIONES -->
+  <div class="cards-grid">
+    <div class="config-card" *ngFor="let promo of promocionesFiltradas">
+
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCGZlr4gLcP_lnP-wXWHiXholmsGihWJOqfA&s"
+        alt="Promoción"
+        class="card-image">
+
+      <span class="descuento-badge">
+        -{{ promo.discountValue }}%
+      </span>
+
+      <div class="card-content">
+        <h4>{{ promo.namePromotion }}</h4>
+
+        <p>
+          Código:
+          <strong>
+            {{ promo.typePromotion === 'CODIGO' ? promo.promoCode : 'Automática' }}
+          </strong>
+        </p>
+
+        <p>
+          {{ promo.startDate | date }} - {{ promo.endDate | date }}
+        </p>
+
+        <span class="card-badge">
+          {{ promo.typePromotion === 'CODIGO' ? 'Código' : 'Automática' }}
         </span>
-
-        <div class="card-content" style="padding: 25px;">
-          <h4>{{ promo.namePromotion }}</h4>
-
-          <div class="card-details-section">
-            <p class="card-field">
-              Código:
-              <span class="font-medium">
-                {{ promo.typePromotion === 'CODIGO' ? promo.promoCode : 'Automática' }}
-              </span>
-            </p>
-
-            <p class="card-field">
-              {{ promo.startDate | date }} - {{ promo.endDate | date }}
-            </p>
-          </div>
-
-          <div class="card-details" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #e2e8f0;">
-            <span class="card-badge" style="display: inline-block; padding: 6px 12px; background: #e0f2fe; color: #0369a1; border-radius: 6px; font-size: 0.85rem; font-weight: 500;">
-              {{ promo.typePromotion === 'CODIGO' ? 'Código' : 'Automática' }}
-            </span>
-          </div>
-        </div>
-        
-        <div class="card-actions" style="padding: 15px 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; justify-content: flex-end;">
-          <button class="btn btn-primary btn-edit-card" (click)="abrirModalEditar(promo)">Editar</button>
-          <button class="btn btn-cancelar btn-delete-card" (click)="eliminarPromocion(promo.idPromotion)">Eliminar</button>
-        </div>
       </div>
+
+      <div class="card-actions">
+        <button class="btn btn-primary" (click)="abrirModalEditar(promo)">Editar</button>
+        <button class="btn btn-cancelar" (click)="eliminarPromocion(promo.idPromotion)">Eliminar</button>
+      </div>
+
     </div>
   </div>
 </div>
 
 <!-- MODAL -->
-<div
-  *ngIf="mostrarModal"
-  class="modal-backdrop">
+<div *ngIf="mostrarModal" class="modal-backdrop">
   <div class="modal">
+
     <h2>{{ modoEdicion ? 'Editar Promoción' : 'Crear Promoción' }}</h2>
 
-    <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Nombre -->
+    <form class="modal-form">
+
       <div>
-        <label class="text-sm font-medium text-gray-700">
-          Nombre <span class="text-red-500">*</span>
-        </label>
-        <input
-          class="form-control"
-          [(ngModel)]="form.namePromotion"
-          name="namePromotion">
+        <label>Nombre *</label>
+        <input [(ngModel)]="form.namePromotion" name="namePromotion">
       </div>
 
-      <!-- Tipo promoción -->
       <div>
-        <label class="text-sm font-medium text-gray-700">
-          Tipo de promoción <span class="text-red-500">*</span>
-        </label>
-        <select
-          class="form-control"
-          [(ngModel)]="form.typePromotion"
-          name="typePromotion">
+        <label>Tipo de promoción *</label>
+        <select [(ngModel)]="form.typePromotion" name="typePromotion">
           <option value="">Seleccione</option>
           <option value="CODIGO">Código</option>
           <option value="AUTOMATICA">Automática</option>
         </select>
       </div>
 
-      <!-- Código (SOLO SI ES CODIGO) -->
-      <div
-        *ngIf="form.typePromotion === 'CODIGO'"
-        class="transition-all duration-300">
-        <label class="text-sm font-medium text-gray-700">
-          Código promocional <span class="text-red-500">*</span>
-        </label>
-        <input
-          class="form-control"
-          [(ngModel)]="form.promoCode"
-          name="promoCode"
-          placeholder="Ej: NAVIDAD2025">
-      </div>
-
-      <!-- Tipo descuento -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Tipo de descuento</label>
-        <select
-          class="form-control"
-          [(ngModel)]="form.discountType"
-          name="discountType">
-          <option value="PORCENTAJE">Porcentaje</option>
-        </select>
-      </div>
-
-      <!-- Valor descuento -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Valor del descuento</label>
-        <input
-          type="number"
-          class="form-control"
-          [(ngModel)]="form.discountValue"
-          name="discountValue">
-      </div>
-
-      <!-- Compra mínima -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Compra mínima</label>
-        <input
-          type="number"
-          class="form-control"
-          [(ngModel)]="form.minPurchase"
-          name="minPurchase">
-      </div>
-
-      <!-- Cupo máximo -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Cupo máximo</label>
-        <input
-          type="number"
-          class="form-control"
-          [(ngModel)]="form.maxQuota"
-          name="maxQuota">
-      </div>
-
-      <!-- Fechas -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">
-          Fecha inicio <span class="text-red-500">*</span>
-        </label>
-        <input
-          type="date"
-          class="form-control"
-          [(ngModel)]="form.startDate"
-          name="startDate">
+      <div *ngIf="form.typePromotion === 'CODIGO'">
+        <label>Código promocional *</label>
+        <input [(ngModel)]="form.promoCode" name="promoCode">
       </div>
 
       <div>
-        <label class="text-sm font-medium text-gray-700">
-          Fecha fin <span class="text-red-500">*</span>
-        </label>
-        <input
-          type="date"
-          class="form-control"
-          [(ngModel)]="form.endDate"
-          name="endDate">
+        <label>Valor del descuento</label>
+        <input type="number" [(ngModel)]="form.discountValue" name="discountValue">
       </div>
+
+      <div>
+        <label>Fecha inicio *</label>
+        <input type="date" [(ngModel)]="form.startDate" name="startDate">
+      </div>
+
+      <div>
+        <label>Fecha fin *</label>
+        <input type="date" [(ngModel)]="form.endDate" name="endDate">
+      </div>
+
     </form>
 
-    <!-- Botones -->
-    <div class="modal-actions" style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
-      <button
-        class="btn btn-cancelar"
-        (click)="cerrarModal()">
-        Cancelar
-      </button>
-
-      <button
-        class="btn btn-primary"
-        (click)="guardar()">
+    <div class="modal-actions">
+      <button class="btn btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()">
         {{ modoEdicion ? 'Actualizar' : 'Crear' }}
       </button>
     </div>
+
   </div>
 </div>

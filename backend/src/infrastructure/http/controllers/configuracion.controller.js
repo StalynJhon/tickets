@@ -9,7 +9,7 @@ const { Configuracion } = dbConnection;
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {
   try {
-    const { descifrarDatos } = require('../../../application/encrypDates');
+    const { descifrarDatos } = require('../../../application/services/encrypDates');
     return dato ? descifrarDatos(dato) : '';
   } catch (error) {
     console.error('Error al descifrar:', error);
@@ -71,7 +71,7 @@ const getConfiguracionGeneral = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Desencriptar datos de contacto de forma segura
           let emailDesencriptado = descifrarSeguro(data.emailContacto);
@@ -190,7 +190,7 @@ const guardarConfiguracionGeneral = async (req, res) => {
     }
     
     // Importar funciones de encriptación
-    const { cifrarDatos } = require('../../../application/encrypDates');
+    const { cifrarDatos } = require('../../../application/services/encrypDates');
     
     // Guardar también en MySQL
     try {
@@ -241,7 +241,7 @@ const getTextosLegales = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Desencriptar textos legales de forma segura
           let terminosDesencriptado = descifrarSeguro(data.terminos);
@@ -309,7 +309,7 @@ const guardarTextosLegales = async (req, res) => {
     }
     
     // Importar funciones de encriptación
-    const { cifrarDatos } = require('../../../application/encrypDates');
+    const { cifrarDatos } = require('../../../application/services/encrypDates');
     
     // Guardar también en MySQL
     try {
@@ -355,7 +355,7 @@ const getConfiguracionNegocio = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Convertir el formato de MySQL al de MongoDB para compatibilidad
           configMongo = {
@@ -437,7 +437,7 @@ const guardarConfiguracionNegocio = async (req, res) => {
     }
     
     // Importar funciones de encriptación
-    const { cifrarDatos } = require('../../../application/encrypDates');
+    const { cifrarDatos } = require('../../../application/services/encrypDates');
     
     // Guardar también en MySQL
     try {
@@ -485,7 +485,7 @@ const getInfoEmpresa = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Desencriptar datos de contacto de forma segura
           let emailDesencriptado = descifrarSeguro(data.emailContacto);
@@ -514,7 +514,7 @@ const getInfoEmpresa = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Desencriptar textos legales de forma segura
           let terminosDesencriptado = descifrarSeguro(data.terminos);
@@ -563,7 +563,7 @@ const getTerminosCondiciones = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Desencriptar términos y condiciones de forma segura
           let terminosDesencriptado = descifrarSeguro(data.terminos);
@@ -607,7 +607,7 @@ const getPoliticaPrivacidad = async (req, res) => {
           const data = configMysql.toJSON();
           
           // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/encrypDates');
+          const { descifrarDatos } = require('../../../application/services/encrypDates');
           
           // Desencriptar política de privacidad de forma segura
           let politicaDesencriptada = descifrarSeguro(data.politica);

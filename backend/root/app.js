@@ -22,7 +22,7 @@ const cors = require('cors');
 
 // Importar módulos locales
 const { MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT } = require('../src/config/keys');
-require('../src/lib/passport');
+require('../src/infrastructure/auth/passport');
 
 // Crear aplicación Express
 const app = express();
@@ -248,7 +248,6 @@ app.use((req, res, next) => {
 
 // ==================== RUTAS API ====================
 // Importar y configurar rutas como API
-app.use(require('../src/infrastructure/http/router/index'))
 app.use('/pagina', require('../src/infrastructure/http/router/pagina.router'))
 app.use('/auth', require('../src/infrastructure/http/router/auth.router'));
 app.use('/rol', require('../src/infrastructure/http/router/rol.router'));
@@ -267,6 +266,8 @@ app.use('/classification', require('../src/infrastructure/http/router/classifica
 app.use('/city', require('../src/infrastructure/http/router/city.router'));
 app.use('/country', require('../src/infrastructure/http/router/country.router'));
 app.use('/staff', require('../src/infrastructure/http/router/staff.router'));
+
+app.use(require('../src/infrastructure/http/router/index'))
 
 // Configurar variables globales
 app.use((req, res, next) => {

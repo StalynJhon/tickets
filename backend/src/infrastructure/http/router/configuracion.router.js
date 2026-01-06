@@ -14,7 +14,7 @@ const {
 } = require('../controllers/configuracion.controller');
 
 // Importar middleware de autenticación
-const authMiddleware = require('../../../application/auth');
+const authMiddleware = require('../../../application/services/auth');
 
 // Rutas para administrador
 router.get('/general', getConfiguracionGeneral);

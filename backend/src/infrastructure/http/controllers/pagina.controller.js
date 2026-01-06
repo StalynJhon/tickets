@@ -2,7 +2,7 @@ const paginaCtl = {}
 const orm = require('../../../infrastructure/database/connection/dataBase.orm')
 const sql = require('../../../infrastructure/database/connection/dataBase.sql')
 const mongo = require('../../../infrastructure/database/connection/dataBaseMongose')
-const { cifrarDatos, descifrarDatos } = require('../../../application/encrypDates')
+const { cifrarDatos, descifrarDatos } = require('../../../application/services/encrypDates')
 
 function safeDecrypt(data) {
     try {
