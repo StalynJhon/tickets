@@ -1,75 +1,63 @@
-<!-- HERO HEADER -->
-<div class="configuracion-layout">
+<div class="container">
 
-  <div class="hero-header">
-    <h1>Promociones y Descuentos</h1>
-    <p class="subtitle">
-      Gestiona todas las promociones y descuentos disponibles en la plataforma
-    </p>
+  <!-- HEADER -->
+  <header class="topbar">
+<h2>PROMOCIONES</h2>
+<span class="user">Administrador<br> Miguel Morales</span>
+</header>
 
-    <!-- Search / Filtros -->
-    <div class="search-filtro-bar">
-      <div class="search-container">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Buscar promociones..."
-          [(ngModel)]="terminoBusqueda"
-          (input)="buscarPromociones()">
-        <i class="search-icon">🔍</i>
-      </div>
+  <!-- CONTENEDOR BLANCO -->
+  <div class="card-container">
 
-      <div class="filtro-options">
-        <button class="filtro-btn" [class.active]="filtroActual === 'todas'" (click)="aplicarFiltro('todas')">Todas</button>
-        <button class="filtro-btn" [class.active]="filtroActual === 'codigo'" (click)="aplicarFiltro('codigo')">Código</button>
-        <button class="filtro-btn" [class.active]="filtroActual === 'automatica'" (click)="aplicarFiltro('automatica')">Automática</button>
-        <button class="filtro-btn" [class.active]="filtroActual === 'activas'" (click)="aplicarFiltro('activas')">Activas</button>
-      </div>
+    <!-- BOTÓN -->
+    <div class="actions">
+      <button class="btn-primary" (click)="abrirCrear()">
+        <span class="icon">+</span>
+        Agregar promoción
+      </button>
     </div>
-  </div>
 
-  <!-- BOTÓN -->
-  <div class="header-actions">
-    <button class="btn btn-primary" (click)="abrirCrear()">
-      + Agregar promoción
-    </button>
-  </div>
+    <!-- GRID -->
+    <div class="grid">
 
-  <!-- GRID PROMOCIONES -->
-  <div class="cards-grid">
-    <div class="config-card" *ngFor="let promo of promocionesFiltradas">
+      <!-- CARD -->
+      <div
+        class="promo-card"
+        *ngFor="let promo of promociones">
 
-      <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCGZlr4gLcP_lnP-wXWHiXholmsGihWJOqfA&s"
-        alt="Promoción"
-        class="card-image">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCGZlr4gLcP_lnP-wXWHiXholmsGihWJOqfA&s"
+          alt="Promoción"
+          class="promo-image">
 
-      <span class="descuento-badge">
-        -{{ promo.discountValue }}%
-      </span>
-
-      <div class="card-content">
-        <h4>{{ promo.namePromotion }}</h4>
-
-        <p>
-          Código:
-          <strong>
-            {{ promo.typePromotion === 'CODIGO' ? promo.promoCode : 'Automática' }}
-          </strong>
-        </p>
-
-        <p>
-          {{ promo.startDate | date }} - {{ promo.endDate | date }}
-        </p>
-
-        <span class="card-badge">
-          {{ promo.typePromotion === 'CODIGO' ? 'Código' : 'Automática' }}
+        <span class="discount">
+          -{{ promo.discountValue }}%
         </span>
-      </div>
 
-      <div class="card-actions">
-        <button class="btn btn-primary" (click)="abrirModalEditar(promo)">Editar</button>
-        <button class="btn btn-cancelar" (click)="eliminarPromocion(promo.idPromotion)">Eliminar</button>
+        <div class="promo-body">
+          <h2>{{ promo.namePromotion }}</h2>
+
+          <p>
+            Código:
+            <span>
+              {{ promo.typePromotion === 'CODIGO' ? promo.promoCode : 'Automática' }}
+            </span>
+          </p>
+
+          <p>
+            {{ promo.startDate | date }} - {{ promo.endDate | date }}
+          </p>
+
+          <div class="promo-actions">
+            <button class="btn-edit" (click)="abrirModalEditar(promo)">
+              Editar
+            </button>
+
+            <button class="btn-delete" (click)="eliminarPromocion(promo.idPromotion)">
+              Eliminar
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -78,9 +66,11 @@
 
 <!-- MODAL -->
 <div *ngIf="mostrarModal" class="modal-backdrop">
-  <div class="modal">
 
-    <h2>{{ modoEdicion ? 'Editar Promoción' : 'Crear Promoción' }}</h2>
+  <div class="modal">
+    <h2>
+      {{ modoEdicion ? 'Editar Promoción' : 'Crear Promoción' }}
+    </h2>
 
     <form class="modal-form">
 
@@ -121,11 +111,10 @@
     </form>
 
     <div class="modal-actions">
-      <button class="btn btn-cancelar" (click)="cerrarModal()">Cancelar</button>
-      <button class="btn btn-primary" (click)="guardar()">
+      <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-save" (click)="guardar()">
         {{ modoEdicion ? 'Actualizar' : 'Crear' }}
       </button>
     </div>
-
   </div>
 </div>

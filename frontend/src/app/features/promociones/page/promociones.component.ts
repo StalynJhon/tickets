@@ -14,12 +14,9 @@ import { PromocionesService } from '../promociones.service';
 export class PromocionesComponent implements OnInit {
 
   promociones: any[] = [];
-  promocionesFiltradas: any[] = [];
   mostrarModal = false;
   modoEdicion = false;
   idEditando: number | null = null;
-  terminoBusqueda: string = '';
-  filtroActual: string = 'todas';
 
   form: any = this.formInicial();
 
@@ -47,10 +44,7 @@ export class PromocionesComponent implements OnInit {
   // ===== CARGAR PROMOCIONES =====
   cargarPromociones() {
     this.promocionesService.getPromociones().subscribe({
-      next: res => {
-        this.promociones = res;
-        this.promocionesFiltradas = [...this.promociones];
-      },
+      next: res => this.promociones = res,
       error: err => console.error(err)
     });
   }
@@ -163,47 +157,5 @@ export class PromocionesComponent implements OnInit {
     this.form = this.formInicial();
     this.modoEdicion = false;
     this.idEditando = null;
-  }
-
-  // Métodos para búsqueda y filtrado
-  aplicarFiltro(filtro: string): void {
-    this.filtroActual = filtro;
-    this.filtrarPromociones();
-  }
-
-  filtrarPromociones(): void {
-    let promocionesFiltradas = [...this.promociones];
-
-    // Aplicar filtro por tipo de promoción
-    if (this.filtroActual !== 'todas') {
-      if (this.filtroActual === 'codigo') {
-        promocionesFiltradas = promocionesFiltradas.filter(promo => promo.typePromotion === 'CODIGO');
-      } else if (this.filtroActual === 'automatica') {
-        promocionesFiltradas = promocionesFiltradas.filter(promo => promo.typePromotion === 'AUTOMATICA');
-      } else if (this.filtroActual === 'activas') {
-        const ahora = new Date();
-        promocionesFiltradas = promocionesFiltradas.filter(promo => {
-          const startDate = new Date(promo.startDate);
-          const endDate = new Date(promo.endDate);
-          return startDate <= ahora && endDate >= ahora;
-        });
-      }
-    }
-
-    // Aplicar filtro de búsqueda
-    if (this.terminoBusqueda.trim() !== '') {
-      const termino = this.terminoBusqueda.toLowerCase();
-      promocionesFiltradas = promocionesFiltradas.filter(promo => 
-        promo.namePromotion.toLowerCase().includes(termino) ||
-        (promo.promoCode && promo.promoCode.toLowerCase().includes(termino)) ||
-        promo.discountValue.toString().includes(termino)
-      );
-    }
-
-    this.promocionesFiltradas = promocionesFiltradas;
-  }
-
-  buscarPromociones(): void {
-    this.filtrarPromociones();
   }
 }
