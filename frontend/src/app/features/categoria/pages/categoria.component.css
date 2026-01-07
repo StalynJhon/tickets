@@ -1,24 +1,33 @@
-/* Fondo general */
+/* =========================================
+   ESTILO: DARK ADMIN (Serio & Corporativo)
+   ========================================= */
+
+/* Fondo general: Azul muy oscuro (Casi negro, igual que el cliente) */
 body {
-  background-color: #f4f6f9;
+  background-color: #0f172a; 
+  color: #f8fafc; /* Texto blanco suave para lectura */
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  -webkit-font-smoothing: antialiased; /* Suavizado de fuente para elegancia */
 }
 
-/* Contenedor principal */
+/* Contenedor principal: Tarjeta oscura */
 .container {
   max-width: 1000px;
   margin: 40px auto;
-  background-color: #ffffff;
+  background-color: #1e293b; /* Gris azulado oscuro */
   padding: 30px;
   border-radius: 14px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
-  font-family: 'Segoe UI', Tahoma, sans-serif;
+  border: 1px solid #334155; /* Borde sutil para definir la caja */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Sombra más profunda */
 }
 
-/* Título */
+/* Título: Usamos el Cyan de la marca para destacar */
 h1 {
   text-align: center;
   margin-bottom: 10px;
-  color: #1f2937;
+  color: #2dd4bf; /* Color "Tienda de Extras" */
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* Subtítulo */
@@ -26,7 +35,7 @@ h1 {
   content: "Administración y control de categorías de eventos";
   display: block;
   text-align: center;
-  color: #6b7280;
+  color: #94a3b8; /* Gris medio para texto secundario */
   margin-bottom: 30px;
   font-size: 14px;
 }
@@ -36,41 +45,64 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
   gap: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 35px; /* Un poco más de aire */
+  padding-bottom: 25px;
+  border-bottom: 1px solid #334155; /* Separador sutil */
 }
 
+/* Inputs: Fondo oscuro para no dañar la vista */
 input {
   padding: 11px 14px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #0f172a; /* Fondo más oscuro que la tarjeta */
+  border: 1px solid #475569;
+  color: #fff; /* Texto blanco */
   font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+input::placeholder {
+  color: #64748b;
 }
 
 input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #2dd4bf; /* Borde Cyan al escribir */
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15); /* Resplandor suave */
 }
 
-/* Botón principal */
+/* Botón principal (CREAR) */
 form button {
-  background-color: #6366f1;
-  color: white;
-  border-radius: 10px;
-  padding: 11px 22px;
-  font-weight: 600;
+  background-color: #2dd4bf; /* Cyan de marca */
+  color: #0f172a; /* Texto oscuro para contraste fuerte */
+  border-radius: 8px;
+  padding: 11px 25px;
+  font-weight: 700;
+  border: none;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
   transition: 0.3s ease;
 }
 
 form button:hover {
-  background-color: #4f46e5;
+  background-color: #14b8a6; /* Cyan un poco más oscuro */
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.4); /* Efecto neón sutil */
 }
 
 /* FILTRO */
 select {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #d1d5db;
+  background-color: #0f172a;
+  border: 1px solid #475569;
+  color: #fff;
   font-size: 14px;
+  cursor: pointer;
+}
+select:focus {
+    outline: none;
+    border-color: #2dd4bf;
 }
 
 /* TABLA */
@@ -80,65 +112,85 @@ table {
   margin-top: 10px;
 }
 
+/* Cabecera de Tabla */
 th {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #1e293b; /* Mismo color fondo, sin caja gris */
+  color: #94a3b8; /* Texto gris azulado */
   padding: 14px;
-  font-size: 14px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #334155; /* Línea divisoria */
+  text-align: left;
 }
 
 td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 14px;
+  border-bottom: 1px solid #334155; /* Líneas muy sutiles */
   font-size: 14px;
+  color: #cbd5e1;
 }
 
-/* Estados */
+/* Estados (Diseño tipo "Pastilla/Badge" moderno) */
 .activo {
-  color: #16a34a;
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #4ade80; /* Verde brillante */
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
+  display: inline-block;
 }
 
 .inactivo {
-  color: #dc2626;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171; /* Rojo suave */
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
+  display: inline-block;
 }
 
-/* Botones de acciones */
+/* Botones de acciones - Estilo más sobrio */
 .editar {
-  background-color: #22c55e;
-  color: white;
-  padding: 7px 14px;
-  border-radius: 8px;
+  background-color: transparent;
+  border: 1px solid #3b82f6; /* Borde Azul */
+  color: #60a5fa;
+  padding: 6px 12px;
+  border-radius: 6px;
   margin-right: 6px;
   font-size: 13px;
+  font-weight: 500;
 }
 
 .editar:hover {
-  background-color: #16a34a;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #93c5fd;
 }
 
 .eliminar {
-  background-color: #ef4444;
-  color: white;
-  padding: 7px 14px;
-  border-radius: 8px;
+  background-color: transparent;
+  border: 1px solid #ef4444; /* Borde Rojo */
+  color: #f87171;
+  padding: 6px 12px;
+  border-radius: 6px;
   font-size: 13px;
+  font-weight: 500;
 }
 
 .eliminar:hover {
-  background-color: #dc2626;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
 }
 
 /* Botones generales */
 button {
-  border: none;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 /* Filas inactivas más suaves */
-tr td .inactivo {
-  opacity: 0.7;
+tr:has(.inactivo) td {
+  opacity: 0.6;
 }
-

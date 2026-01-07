@@ -60,7 +60,12 @@ app-root {
 /* CONTENIDO */
 .main-content {
   flex: 1;
-  background-color: #f3f4f6;
+  background: linear-gradient(
+    180deg,
+    #0f172a,
+    #020617
+  );
   padding: 2rem;
   overflow-y: auto;
 }
+
