@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClienteService } from '../cliente.service';
 import { FormsModule } from '@angular/forms';
+import { ClienteService } from '../cliente.service';
 
 @Component({
   selector: 'app-cliente-list',
@@ -14,136 +14,159 @@ export class ClienteListComponent implements OnInit {
 
   clientes: any[] = [];
   clientesFiltrados: any[] = [];
-  filtroActual: string = 'todos';
-  terminoBusqueda: string = '';
+  terminoBusqueda = '';
 
-  constructor(private clienteService: ClienteService) { }
+  mostrarModal = false;
+  editando = false;
+  clienteEditandoId: number | null = null;
+
+  clienteForm: any = {
+    cedulaCliente: '',
+    nombreCliente: '',
+    usernameCliente: '',
+    passwordCliente: '',
+    emailCliente: '',
+    telefonoCliente: '',
+    direccionCliente: ''
+  };
+
+  constructor(private clienteService: ClienteService) {}
 
   ngOnInit(): void {
     this.cargarClientes();
   }
 
+  /* ===============================
+     CARGAR CLIENTES
+  =============================== */
   cargarClientes() {
     this.clienteService.getClientes().subscribe({
       next: (data) => {
-        // Mapeamos los campos de mongo al nivel principal con los nombres correctos
         this.clientes = data.map(cliente => ({
           ...cliente,
-          emailCliente: cliente.detallesMongo?.emailCliente || '',
-          telefonoCliente: cliente.detallesMongo?.telefonoCliente || '',
-          direccionCliente: cliente.detallesMongo?.direccionCliente || '',
-          menu: false // 👈 aseguramos que ningún menú esté abierto
+          stadoCliente: cliente.stadoCliente ?? 'activo',
+
+          // 🔹 CORRECCIÓN: usamos directamente los campos devueltos por el backend
+          emailCliente: cliente.correoCliente ?? '',
+          telefonoCliente: cliente.telefonoCliente ?? '',
+          direccionCliente: cliente.direccionCliente ?? '',
+          tipoCliente: cliente.tipoCliente ?? 'Regular',
+          menu: false
         }));
+
         this.clientesFiltrados = [...this.clientes];
       },
-      error: (err) => {
-        console.error(err);
-      }
+      error: (err) => console.error('Error al cargar clientes', err)
     });
   }
 
-  eliminarCliente(id: number) {
-    if (!confirm('¿Estás seguro de eliminar este cliente?')) {
-      return;
-    }
+  /* ===============================
+     BUSCAR CLIENTES
+  =============================== */
+  buscarClientes() {
+    const term = this.terminoBusqueda.toLowerCase();
 
-    this.clienteService.eliminarCliente(id).subscribe({
-      next: () => {
-        alert('Cliente eliminado correctamente');
-        this.cargarClientes();
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error al eliminar cliente');
-      }
+    this.clientesFiltrados = this.clientes.filter(c =>
+      c.nombreCliente?.toLowerCase().includes(term) ||
+      c.cedulaCliente?.toLowerCase().includes(term) ||
+      c.usernameCliente?.toLowerCase().includes(term) ||
+      c.emailCliente?.toLowerCase().includes(term)
+    );
+  }
+
+  /* ===============================
+     CAMBIAR ESTADO
+  =============================== */
+  cambiarEstado(cliente: any) {
+    const nuevoEstado = cliente.stadoCliente === 'activo' ? 'inactivo' : 'activo';
+    const payload = { ...cliente, stadoCliente: nuevoEstado };
+
+    if (!payload.passwordCliente) delete payload.passwordCliente;
+
+    this.clienteService.actualizarCliente(cliente.idClientes, payload).subscribe({
+      next: () => { cliente.stadoCliente = nuevoEstado; },
+      error: () => alert('Error al cambiar estado')
     });
   }
 
-  clienteEditando: any = null;
-  mostrarModal = false;
+  /* ===============================
+     MODAL
+  =============================== */
+  abrirModalCrear() {
+    this.editando = false;
+    this.limpiarFormulario();
+    this.mostrarModal = true;
+  }
 
   abrirModalEditar(cliente: any) {
-    // 🔹 CERRAR TODOS LOS MENÚS ABIERTOS
-    this.clientes.forEach(c => c.menu = false);
+    this.editando = true;
+    this.clienteEditandoId = cliente.idClientes;
 
-    // copia para no modificar la tabla directamente
-    this.clienteEditando = { ...cliente };
-
-    // usamos los nombres originales del backend
-    this.clienteEditando.emailCliente = cliente.emailCliente;
-    this.clienteEditando.telefonoCliente = cliente.telefonoCliente;
-    this.clienteEditando.direccionCliente = cliente.direccionCliente;
+    this.clienteForm = {
+      cedulaCliente: cliente.cedulaCliente,
+      nombreCliente: cliente.nombreCliente,
+      usernameCliente: cliente.usernameCliente,
+      passwordCliente: '',
+      emailCliente: cliente.emailCliente,
+      telefonoCliente: cliente.telefonoCliente,
+      direccionCliente: cliente.direccionCliente
+    };
 
     this.mostrarModal = true;
   }
 
   cerrarModal() {
     this.mostrarModal = false;
-    this.clienteEditando = null;
+    this.limpiarFormulario();
   }
 
-  guardarEdicion() {
-    this.clienteService
-      .actualizarCliente(this.clienteEditando.idClientes, this.clienteEditando)
-      .subscribe({
-        next: () => {
-          alert('Cliente actualizado correctamente');
-          this.cerrarModal();
-          this.cargarClientes();
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error al actualizar cliente');
-        }
+  limpiarFormulario() {
+    this.clienteForm = {
+      cedulaCliente: '',
+      nombreCliente: '',
+      usernameCliente: '',
+      passwordCliente: '',
+      emailCliente: '',
+      telefonoCliente: '',
+      direccionCliente: ''
+    };
+    this.clienteEditandoId = null;
+  }
+
+  /* ===============================
+     GUARDAR CLIENTE
+  =============================== */
+  guardarCliente() {
+    const payload = { ...this.clienteForm };
+    if (!this.editando && !payload.passwordCliente) {
+      alert('La contraseña es obligatoria');
+      return;
+    }
+
+    if (this.editando && !payload.passwordCliente) delete payload.passwordCliente;
+
+    if (this.editando && this.clienteEditandoId) {
+      this.clienteService.actualizarCliente(this.clienteEditandoId, payload).subscribe({
+        next: () => { this.cerrarModal(); this.cargarClientes(); },
+        error: () => alert('Error al actualizar cliente')
       });
-  }
-
-  /* ============================
-     MÉTODOS MENÚ ⋮
-     ============================ */
-
-  editarDesdeMenu(cliente: any) {
-    cliente.menu = false;
-    this.abrirModalEditar(cliente);
-  }
-
-  eliminarDesdeMenu(cliente: any) {
-    cliente.menu = false;
-    this.eliminarCliente(cliente.idClientes);
-  }
-
-  // Métodos para búsqueda y filtrado
-  aplicarFiltro(filtro: string): void {
-    this.filtroActual = filtro;
-    this.filtrarClientes();
-  }
-
-  filtrarClientes(): void {
-    let clientesFiltrados = [...this.clientes];
-
-    // Aplicar filtro por estado
-    if (this.filtroActual === 'activos') {
-      clientesFiltrados = clientesFiltrados.filter(cliente => true); // Todos los clientes están activos
-    } else if (this.filtroActual === 'inactivos') {
-      clientesFiltrados = clientesFiltrados.filter(cliente => false); // No hay clientes inactivos en este ejemplo
+    } else {
+      this.clienteService.crearCliente(payload).subscribe({
+        next: () => { this.cerrarModal(); this.cargarClientes(); },
+        error: () => alert('Error al crear cliente')
+      });
     }
-
-    // Aplicar filtro de búsqueda
-    if (this.terminoBusqueda.trim() !== '') {
-      const termino = this.terminoBusqueda.toLowerCase();
-      clientesFiltrados = clientesFiltrados.filter(cliente => 
-        cliente.nombreCliente.toLowerCase().includes(termino) ||
-        cliente.cedulaCliente.toLowerCase().includes(termino) ||
-        cliente.emailCliente.toLowerCase().includes(termino) ||
-        cliente.telefonoCliente.toLowerCase().includes(termino) ||
-        cliente.direccionCliente.toLowerCase().includes(termino)
-      );
-    }
-
-    this.clientesFiltrados = clientesFiltrados;
   }
 
-  buscarClientes(): void {
-    this.filtrarClientes();
+  /* ===============================
+     ELIMINAR CLIENTE
+  =============================== */
+  eliminarCliente(id: number) {
+    if (!confirm('¿Desea eliminar este cliente?')) return;
+
+    this.clienteService.eliminarCliente(id).subscribe({
+      next: () => this.cargarClientes(),
+      error: () => alert('Error al eliminar cliente')
+    });
   }
 }

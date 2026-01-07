@@ -1,105 +1,130 @@
-<!-- HERO HEADER -->
 <div class="configuracion-layout">
+
+  <!-- HERO -->
   <div class="hero-header">
-    <h1>Listado de Clientes</h1>
-    <p class="subtitle">Gestiona todos los clientes registrados en la plataforma</p>
-    
-    <!-- Search/Filtro Bar -->
+    <h1>Gestión de Clientes</h1>
+    <p class="subtitle">Administración y control de clientes registrados</p>
+
     <div class="search-filtro-bar">
       <div class="search-container">
-        <input type="text" class="search-input" placeholder="Buscar clientes..." [(ngModel)]="terminoBusqueda" (input)="buscarClientes()">
-        <i class="search-icon">🔍</i>
+        <span class="search-icon">🔍</span>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Buscar cliente..."
+          [(ngModel)]="terminoBusqueda"
+          (input)="buscarClientes()"
+        />
       </div>
-      <div class="filtro-options">
-        <button class="filtro-btn" [class.active]="filtroActual === 'todos'" (click)="aplicarFiltro('todos')">Todos</button>
-        <button class="filtro-btn" [class.active]="filtroActual === 'activos'" (click)="aplicarFiltro('activos')">Activos</button>
-        <button class="filtro-btn" [class.active]="filtroActual === 'inactivos'" (click)="aplicarFiltro('inactivos')">Inactivos</button>
-      </div>
+
+      <button class="btn btn-primary" (click)="abrirModalCrear()">
+        + Nuevo Cliente
+      </button>
     </div>
   </div>
 
-  <!-- CLIENTES CARDS -->
-  <div class="config-form">
-    <div class="cards-container">
-      <div class="config-card" *ngFor="let cliente of clientesFiltrados">
-        <!-- MENU 3 PUNTOS -->
-        <div class="menu-container">
-          <button class="menu-btn" (click)="cliente.menu = !cliente.menu">⋮</button>
-
-          <div class="menu" *ngIf="cliente.menu">
-            <button (click)="editarDesdeMenu(cliente)">Editar</button>
-            <button (click)="eliminarDesdeMenu(cliente)">Eliminar</button>
-          </div>
+  <!-- LISTA DE CLIENTES -->
+  <div class="cards-container">
+    <div class="config-card" *ngFor="let cliente of clientesFiltrados">
+      <div class="menu-container">
+        <button class="menu-btn" (click)="cliente.menu = !cliente.menu">⋮</button>
+        <div class="menu" *ngIf="cliente.menu">
+          <button (click)="abrirModalEditar(cliente)">Editar</button>
+          <button (click)="eliminarCliente(cliente.idClientes)">Eliminar</button>
+          <button (click)="cambiarEstado(cliente)">
+            {{ cliente.stadoCliente === 'activo' ? 'Desactivar' : 'Activar' }}
+          </button>
         </div>
+      </div>
 
-        <div class="card-content" style="padding: 30px;">
-          <h3>{{ cliente.nombreCliente }}</h3>
+      <div class="card-content">
+        <h3>{{ cliente.nombreCliente }}</h3>
+        <p><strong>Cédula:</strong> {{ cliente.cedulaCliente }}</p>
+        <p><strong>Usuario:</strong> {{ cliente.usernameCliente }}</p>
+        <p><strong>Email:</strong> {{ cliente.emailCliente || '—' }}</p>
+        <p><strong>Teléfono:</strong> {{ cliente.telefonoCliente || '—' }}</p>
+        <p><strong>Dirección:</strong> {{ cliente.direccionCliente || '—' }}</p>
 
-          <p><strong>Cédula:</strong> {{ cliente.cedulaCliente }}</p>
-          <p><strong>Email:</strong> {{ cliente.emailCliente || '—' }}</p>
-          <p><strong>Celular:</strong> {{ cliente.telefonoCliente || '—' }}</p>
-          <p><strong>Dirección:</strong> {{ cliente.direccionCliente || '—' }}</p>
-
-          <!-- ESTADO -->
-          <span class="estado activo" style="display: inline-block; padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 6px; font-size: 0.85rem; font-weight: 500;">Activo</span>
-        </div>
+        <span
+          class="estado"
+          [ngClass]="{
+            'activo': cliente.stadoCliente === 'activo',
+            'inactivo': cliente.stadoCliente === 'inactivo'
+          }"
+        >
+          {{ cliente.stadoCliente | titlecase }}
+        </span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL EDITAR CLIENTE -->
-<div *ngIf="mostrarModal" class="modal-backdrop">
+<!-- MODAL CREAR / EDITAR -->
+<div class="modal-backdrop" *ngIf="mostrarModal">
   <div class="modal">
-    <h2>Editar Cliente</h2>
+    <h2>{{ editando ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
 
-    <form (ngSubmit)="guardarEdicion()">
+    <form (ngSubmit)="guardarCliente()">
+
       <input
         type="text"
-        [(ngModel)]="clienteEditando.cedulaCliente"
-        name="cedulaCliente"
         placeholder="Cédula"
+        [(ngModel)]="clienteForm.cedulaCliente"
+        name="cedulaCliente"
         required
-        class="form-control"
       />
 
       <input
         type="text"
-        [(ngModel)]="clienteEditando.nombreCliente"
-        name="nombreCliente"
         placeholder="Nombre"
+        [(ngModel)]="clienteForm.nombreCliente"
+        name="nombreCliente"
         required
-        class="form-control"
+      />
+
+      <input
+        type="text"
+        placeholder="Usuario"
+        [(ngModel)]="clienteForm.usernameCliente"
+        name="usernameCliente"
+        required
+      />
+
+      <input
+        *ngIf="!editando"
+        type="password"
+        placeholder="Contraseña"
+        [(ngModel)]="clienteForm.passwordCliente"
+        name="passwordCliente"
+        required
       />
 
       <input
         type="email"
-        [(ngModel)]="clienteEditando.emailCliente"
+        placeholder="Correo"
+        [(ngModel)]="clienteForm.emailCliente"
         name="emailCliente"
-        placeholder="Email"
-        class="form-control"
       />
 
       <input
         type="text"
-        [(ngModel)]="clienteEditando.telefonoCliente"
+        placeholder="Teléfono"
+        [(ngModel)]="clienteForm.telefonoCliente"
         name="telefonoCliente"
-        placeholder="Celular"
-        class="form-control"
       />
 
       <input
         type="text"
-        [(ngModel)]="clienteEditando.direccionCliente"
-        name="direccionCliente"
         placeholder="Dirección"
-        class="form-control"
+        [(ngModel)]="clienteForm.direccionCliente"
+        name="direccionCliente"
       />
 
       <div class="acciones">
-        <button type="submit" class="btn btn-primary">Guardar</button>
         <button type="button" class="btn btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
       </div>
+
     </form>
   </div>
 </div>
