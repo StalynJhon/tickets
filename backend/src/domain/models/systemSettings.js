@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const systemSettingsSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['theme', 'typography', 'general', 'business', 'payment'],
+        enum: ['theme', 'typography', 'general', 'business', 'payment', 'legal'],
         required: true
     },
     colors: {
