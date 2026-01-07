@@ -1,58 +1,47 @@
 <div class="products-container">
-
-  <!-- HEADER -->
   <div class="header-section">
     <h1 class="page-title">
       <span class="icon">🛍️</span>
       Gestión de Productos
     </h1>
-
     <div class="header-actions">
       <button class="btn btn-secondary" (click)="openCategoryModal(true)">
-        📁 Añadir Categoría
+        <span class="icon">📁</span>
+        Añadir Categoría Demo
       </button>
-
       <button class="btn btn-primary" (click)="openCreateModal()">
-        ➕ Nuevo Producto
+        <span class="icon">➕</span>
+        Nuevo Producto
       </button>
     </div>
   </div>
 
-  <!-- HERO BANNER -->
-  <div class="hero-banner">
-    <div class="hero-badge">🍿</div>
-    <div class="hero-text">
-      <h2>TIENDA DE EXTRAS</h2>
-      <p>Complementa tu experiencia con nuestros combos y bebidas</p>
-    </div>
-  </div>
-
-  <!-- FILTROS -->
+  <!-- Filters and View Toggle -->
   <div class="filters-card">
     <div class="filters-header">
-      <h3 class="filters-title">Filtros de búsqueda</h3>
-
+      <h3 class="filters-title">Filtros de Búsqueda</h3>
       <button class="btn-view-toggle" (click)="toggleView()">
         {{ view() === 'grid' ? '📋 Vista Tabla' : '🔲 Vista Cuadrícula' }}
       </button>
     </div>
-
+    
     <div class="filters-grid">
       <div class="filter-group">
-        <label>Buscar</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="filterSearch"
+        <label>Buscar Producto</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          [(ngModel)]="filterSearch" 
           (ngModelChange)="applyFilters()"
-          placeholder="🔎 Buscar productos (ej. Vasos, Combos...)">
+          placeholder="Nombre o descripción...">
       </div>
-
+      
       <div class="filter-group">
         <label>Categoría</label>
-        <select class="form-control"
-                [(ngModel)]="filterCategory"
-                (ngModelChange)="applyFilters()">
+        <select 
+          class="form-control" 
+          [(ngModel)]="filterCategory" 
+          (ngModelChange)="applyFilters()">
           <option value="">Todas</option>
           @for (category of categories(); track category.idProductCategory) {
             <option [value]="category.idProductCategory">
@@ -61,18 +50,19 @@
           }
         </select>
       </div>
-
+      
       <div class="filter-group">
         <label>Disponibilidad</label>
-        <select class="form-control"
-                [(ngModel)]="filterAvailable"
-                (ngModelChange)="applyFilters()">
+        <select 
+          class="form-control" 
+          [(ngModel)]="filterAvailable" 
+          (ngModelChange)="applyFilters()">
           <option value="all">Todos</option>
           <option value="true">Disponibles</option>
           <option value="false">No disponibles</option>
         </select>
       </div>
-
+      
       <div class="filter-actions">
         <button class="btn btn-secondary" (click)="clearFilters()">
           🔄 Limpiar
@@ -81,13 +71,25 @@
     </div>
   </div>
 
-  <!-- GRID -->
+  @if (loading()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <!-- Grid View -->
   @if (view() === 'grid') {
     <div class="products-grid">
-
+      @if (filteredProducts().length === 0) {
+        <div class="empty-state-full">
+          <span class="icon">📦</span>
+          <p>No se encontraron productos</p>
+        </div>
+      }
+      
       @for (product of filteredProducts(); track product.idProduct) {
-        <div class="product-card">
-
+        <div class="product-card" [class.unavailable]="!product.availableProduct">
+          <!-- Badges -->
           <div class="card-badges">
             @if (product.newProduct) {
               <span class="badge-new">🆕 Nuevo</span>
@@ -95,49 +97,296 @@
             @if (product.popularProduct) {
               <span class="badge-popular">⭐ Popular</span>
             }
+            @if (product.hasActiveDiscount) {
+              <span class="badge-discount">
+                🏷️ -{{ product.discountPercentage }}%
+              </span>
+            }
           </div>
 
-          <div class="product-image-container">
-            <img *ngIf="product.imageUrl"
-                 [src]="product.imageUrl"
-                 class="product-image">
-            <div *ngIf="!product.imageUrl"
-                 class="product-image-placeholder">
-              📷
+          <!-- Imagen del producto -->
+          @if (product.imageUrl) {
+            <div class="product-image-container">
+              <img [src]="product.imageUrl" [alt]="product.nameProduct" class="product-image">
             </div>
-          </div>
+          } @else {
+            <div class="product-image-placeholder">
+              <span class="icon">📷</span>
+              <p>Sin imagen</p>
+            </div>
+          }
 
           <div class="card-content">
             <h3 class="product-name">{{ product.nameProduct }}</h3>
-            <p class="product-category">
-              {{ getCategoryName(product.categoryId) }}
-            </p>
-
+            <p class="product-category">{{ getCategoryName(product.categoryId) }}</p>
             <p class="product-description">
               {{ product.descriptionProduct || 'Sin descripción' }}
             </p>
 
             <div class="product-pricing">
-              <span class="price-current">
-                ${{ product.priceProduct }}
+              @if (product.hasActiveDiscount) {
+                <span class="price-old">${{ product.priceProduct }}</span>
+                <span class="price-current">${{ product.finalPrice }}</span>
+              } @else {
+                <span class="price-current">${{ product.priceProduct }}</span>
+              }
+            </div>
+
+            <div class="product-stock">
+              <span [class]="'stock-badge ' + getStockBadgeClass(product.stockProduct)">
+                {{ getStockLabel(product.stockProduct) }} 
+                <strong>({{ product.stockProduct || 0 }})</strong>
               </span>
             </div>
 
             <div class="product-actions">
-              <button class="btn btn-outline"
-                      (click)="openEditModal(product)">
-                Ver Detalle
+              <button class="btn-icon btn-stock" (click)="updateStock(product)" title="Actualizar stock">
+                📊
               </button>
-
-              <button class="btn btn-neon"
-                      (click)="addToCart(product)">
-                🛒 Agregar
+              <button class="btn-icon btn-edit" (click)="openEditModal(product)" title="Editar">
+                ✏️
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteProduct(product)" title="Eliminar">
+                🗑️
               </button>
             </div>
           </div>
-
         </div>
       }
+    </div>
+  }
+
+  <!-- Table View -->
+  @if (view() === 'table') {
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Estado</th>
+              <th>Rating</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredProducts().length === 0) {
+              <tr>
+                <td colspan="7" class="no-data">
+                  <div class="empty-state">
+                    <span class="icon">📦</span>
+                    <p>No se encontraron productos</p>
+                  </div>
+                </td>
+              </tr>
+            }
+            @for (product of filteredProducts(); track product.idProduct) {
+              <tr class="table-row-hover">
+                <td>
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.nameProduct" class="table-product-image">
+                  } @else {
+                    <span class="no-image-icon">📷</span>
+                  }
+                </td>
+                <td>
+                  <div class="product-info">
+                    <strong>{{ product.nameProduct }}</strong>
+                    @if (product.newProduct) {
+                      <span class="mini-badge">🆕</span>
+                    }
+                    @if (product.popularProduct) {
+                      <span class="mini-badge">⭐</span>
+                    }
+                  </div>
+                </td>
+                <td>{{ getCategoryName(product.categoryId) }}</td>
+                <td>
+                  <div class="price-column">
+                    @if (product.hasActiveDiscount) {
+                      <span class="price-old-small">${{ product.priceProduct }}</span>
+                      <span class="price-current-small">${{ product.finalPrice }}</span>
+                    } @else {
+                      <span class="price-current-small">${{ product.priceProduct }}</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  <span [class]="'stock-badge-small ' + getStockBadgeClass(product.stockProduct)">
+                    {{ product.stockProduct || 0 }}
+                  </span>
+                </td>
+                <td>
+                  <span [class]="'status-badge ' + (product.availableProduct ? 'status-available' : 'status-unavailable')">
+                    {{ product.availableProduct ? 'Disponible' : 'No disponible' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="rating">
+                    ⭐ {{ product.ratingProduct || 0 }}
+                    <span class="vote-count">({{ product.voteCount || 0 }})</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-icon btn-stock" (click)="updateStock(product)" title="Stock">📊</button>
+                    <button class="btn-icon btn-edit" (click)="openEditModal(product)" title="Editar">✏️</button>
+                    <button class="btn-icon btn-delete" (click)="deleteProduct(product)" title="Eliminar">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Product Modal -->
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editMode() ? '✏️ Editar Producto' : '➕ Nuevo Producto' }}</h2>
+          <button class="btn-close" (click)="closeModal()">✖</button>
+        </div>
+        
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label>Nombre del Producto *</label>
+                <input type="text" class="form-control" [(ngModel)]="currentProduct.nameProduct" name="nameProduct">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Categoría *</label>
+                <select class="form-control" [(ngModel)]="currentProduct.categoryId" name="categoryId">
+                  <option [value]="0">Seleccionar...</option>
+                  @for (category of categories(); track category.idProductCategory) {
+                    <option [value]="category.idProductCategory">{{ category.nameCategory }}</option>
+                  }
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Precio *</label>
+                <input type="number" class="form-control" [(ngModel)]="currentProduct.priceProduct" name="priceProduct" min="0" step="0.01">
+              </div>
+
+              <div class="form-group">
+                <label>Stock</label>
+                <input type="number" class="form-control" [(ngModel)]="currentProduct.stockProduct" name="stockProduct" min="0">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea class="form-control" [(ngModel)]="currentProduct.descriptionProduct" name="descriptionProduct" rows="3"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ingredientes</label>
+                <input type="text" class="form-control" [(ngModel)]="currentProduct.ingredients" name="ingredients">
+              </div>
+              
+              <div class="form-group">
+                <label>Alérgenos</label>
+                <input type="text" class="form-control" [(ngModel)]="currentProduct.allergens" name="allergens">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Descuento (%)</label>
+                <input type="number" class="form-control" [(ngModel)]="currentProduct.discountPercentage" name="discountPercentage" min="0" max="100">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>URL de Imagen</label>
+              <input type="url" class="form-control" [(ngModel)]="currentProduct.imageUrl" name="imageUrl" placeholder="https://ejemplo.com/imagen.jpg">
+            </div>
+
+            <!-- Vista previa de imagen -->
+            @if (currentProduct.imageUrl) {
+              <div class="form-group">
+                <label>Vista Previa</label>
+                <div class="image-preview">
+                  <img [src]="currentProduct.imageUrl" [alt]="currentProduct.nameProduct || 'Imagen del producto'" class="preview-image">
+                </div>
+              </div>
+            }
+
+            <div class="form-checkboxes">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="currentProduct.availableProduct" name="availableProduct">
+                <span>Disponible</span>
+              </label>
+              
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="currentProduct.popularProduct" name="popularProduct">
+                <span>⭐ Popular</span>
+              </label>
+              
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="currentProduct.newProduct" name="newProduct">
+                <span>🆕 Nuevo</span>
+              </label>
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button class="btn btn-primary" (click)="saveProduct()">
+            {{ editMode() ? 'Actualizar' : 'Crear' }} Producto
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Category Modal -->
+  @if (showCategoryModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>📁 Nueva Categoría</h2>
+          <button class="btn-close" (click)="closeModal()">✖</button>
+        </div>
+        
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input type="text" class="form-control" [(ngModel)]="currentCategory.nameCategory" name="nameCategory">
+            </div>
+            
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea class="form-control" [(ngModel)]="currentCategory.descriptionCategory" name="descriptionCategory" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Orden de visualización</label>
+              <input type="number" class="form-control" [(ngModel)]="currentCategory.displayOrder" name="displayOrder" min="0">
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button class="btn btn-primary" (click)="saveCategory()">Crear Categoría</button>
+        </div>
+      </div>
     </div>
   }
 </div>

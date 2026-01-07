@@ -9,11 +9,21 @@ const { Configuracion } = dbConnection;
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {
   try {
+    // Verificar si el dato es nulo, indefinido, vacío o no es una cadena
+    if (dato === null || dato === undefined || dato === '' || typeof dato !== 'string') {
+      return dato || '';
+    }
+    // Verificar si el dato parece estar encriptado (tiene formato de texto encriptado)
+    // Si no parece encriptado, devolverlo tal cual
+    if (!dato.includes('U2FsdGVkX1')) { // 'U2FsdGVkX1' es el prefijo común de datos encriptados con CryptoJS
+      return dato;
+    }
     const { descifrarDatos } = require('../../../application/services/encrypDates');
-    return dato ? descifrarDatos(dato) : '';
+    return descifrarDatos(dato);
   } catch (error) {
-    console.error('Error al descifrar:', error);
-    return '';
+    console.error('Error al descifrar:', error.message);
+    // Devolver el valor original en lugar de fallar
+    return dato;
   }
 };
 
