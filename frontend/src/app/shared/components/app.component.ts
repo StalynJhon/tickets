@@ -16,8 +16,11 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
 
+  eventosSubmenuOpen = false; // controla el submenu de Eventos
+
   constructor(public router: Router) {}
 
+  // Métodos de navegación (opcionales si sigues usando routerLink directo)
   irDashboard(event: Event) {
     event.preventDefault();
     this.router.navigate(['/dashboard']);
@@ -41,5 +44,11 @@ export class AppComponent {
   irConfiguracion(event: Event) {
     event.preventDefault();
     this.router.navigate(['/configuracion']);
+  }
+
+  // Nuevo método para abrir/cerrar el submenu
+  toggleEventosSubmenu(event: Event) {
+    event.preventDefault(); // evita que el click recargue la página
+    this.eventosSubmenuOpen = !this.eventosSubmenuOpen;
   }
 }

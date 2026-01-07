@@ -15,51 +15,42 @@
 
         <li>
           <a routerLink="/clientes" routerLinkActive="active">
-            Gestionar Clientes
+            Clientes
           </a>
         </li>
 
+        <!-- Botón de Eventos con submenu -->
         <li>
-          <a routerLink="/eventos" routerLinkActive="active">
-            Eventos
+          <a href="#" (click)="toggleEventosSubmenu($event)" 
+             [class.active]="eventosSubmenuOpen">
+            Administrar ▾
           </a>
+          <ul *ngIf="eventosSubmenuOpen" class="submenu">
+            <li>
+              <a routerLink="/eventos" routerLinkActive="active"> Peliculas</a>
+            </li>
+            <li>
+              <a routerLink="/promociones" routerLinkActive="active"> Promociones</a>
+            </li>
+            <li>
+              <a routerLink="/categorias" routerLinkActive="active"> Categorías</a>
+            </li>
+            <li>
+              <a routerLink="/products" routerLinkActive="active"> Productos</a>
+            </li>
+            <li>
+              <a routerLink="/transport" routerLinkActive="active"> Transporte</a>
+            </li>
+          </ul>
         </li>
 
-        <li>
-          <a routerLink="/promociones" routerLinkActive="active">
-            Gestionar Promociones
-          </a>
-        </li>
-
+        <!-- Configuración sigue normal -->
         <li>
           <a routerLink="/configuracion" routerLinkActive="active">
             Configuración
           </a>
         </li>
 
-        <li>
-          <a routerLink="/movies" routerLinkActive="active">
-            Gestionar Películas
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/categorias" routerLinkActive="active">
-            Gestionar Categorías
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/products" routerLinkActive="active">
-            Gestionar Productos
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/transport" routerLinkActive="active">
-            Gestionar Transporte
-          </a>
-        </li>
       </ul>
     </nav>
   </aside>
