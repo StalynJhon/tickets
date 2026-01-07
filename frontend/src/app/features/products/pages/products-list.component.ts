@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ProductService } from '../product.service';
 import { Product } from '../../../entities/product/product.model';
@@ -15,6 +16,8 @@ import { ProductCategory } from '../../../entities/product/product-category.mode
 })
 export class ProductsListComponent implements OnInit {
   private productService = inject(ProductService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   products = signal<Product[]>([]);
   categories = signal<ProductCategory[]>([]);
@@ -35,7 +38,31 @@ export class ProductsListComponent implements OnInit {
   currentCategory: Partial<ProductCategory> = {};
 
   ngOnInit() {
-    this.loadData();
+    // Verificar si hay parámetros de ruta para edición o creación
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      // Modo de edición - cargar productos y abrir modal
+      this.productService.getProducts().subscribe({
+        next: (data) => {
+          this.products.set(data);
+          this.filteredProducts.set(data);
+          const productId = Number(id);
+          const productToEdit = data.find(p => p.idProduct === productId);
+          if (productToEdit) {
+            this.openEditModal(productToEdit);
+          }
+        },
+        error: () => {
+          this.loading.set(false);
+        }
+      });
+    } else {
+      // Verificar si es una ruta de creación
+      if (this.router.url.includes('/products/new')) {
+        this.openCreateModal();
+      }
+      this.loadData();
+    }
   }
 
   loadData() {
@@ -50,7 +77,14 @@ export class ProductsListComponent implements OnInit {
     });
 
     this.productService.getCategories().subscribe({
-      next: (data) => this.categories.set(data)
+      next: (data) => {
+        console.log('Categorías cargadas:', data);
+        this.categories.set(data);
+      },
+      error: (error) => {
+        console.error('Error al cargar categorías:', error);
+        Swal.fire('Error', 'No se pudieron cargar las categorías', 'error');
+      }
     });
   }
 
@@ -209,10 +243,21 @@ export class ProductsListComponent implements OnInit {
     }
 
     this.productService.createCategory(this.currentCategory).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('Respuesta de creación de categoría:', response);
         Swal.fire('¡Éxito!', 'Categoría creada correctamente', 'success');
         this.closeModal();
         this.loadData();
+      },
+      error: (error) => {
+        console.error('Error al crear categoría:', error);
+        let errorMessage = 'No se pudo crear la categoría';
+        if (error.error?.message) {
+          errorMessage += ': ' + error.error.message;
+        } else if (error.message) {
+          errorMessage += ': ' + error.message;
+        }
+        Swal.fire('Error', errorMessage, 'error');
       }
     });
   }
@@ -256,24 +301,14 @@ export class ProductsListComponent implements OnInit {
   }
 
   getCategoryName(categoryId?: number): string {
-    if (categoryId === undefined || categoryId === null) return 'Sin categoría';
+    if (!categoryId) {
+      return 'Sin categoría';
+    }
     const category = this.categories().find(c => c.idProductCategory === categoryId);
     return category?.nameCategory || 'Sin categoría';
   }
 
   toggleView() {
     this.view.set(this.view() === 'grid' ? 'table' : 'grid');
-  }
-
-  addToCart(product: Product) {
-    // Lógica para agregar producto al carrito
-    // Por ahora, simplemente mostrar un mensaje de confirmación
-    Swal.fire({
-      title: '¡Producto agregado!',
-      text: `${product.nameProduct} ha sido agregado al carrito`,
-      icon: 'success',
-      timer: 1500,
-      showConfirmButton: false
-    });
   }
 }

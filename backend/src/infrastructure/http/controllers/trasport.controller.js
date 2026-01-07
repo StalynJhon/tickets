@@ -7,10 +7,20 @@ const { cifrarDatos, descifrarDatos } = require('../../../application/services/e
 // Función para descifrar de forma segura
 const descifrarSeguro = (dato) => {
     try {
-        return dato ? descifrarDatos(dato) : '';
+        // Verificar si el dato es nulo, indefinido, vacío o no es una cadena
+        if (dato === null || dato === undefined || dato === '' || typeof dato !== 'string') {
+            return dato || '';
+        }
+        // Verificar si el dato parece estar encriptado (tiene formato de texto encriptado)
+        // Si no parece encriptado, devolverlo tal cual
+        if (!dato.includes('U2FsdGVkX1')) { // 'U2FsdGVkX1' es el prefijo común de datos encriptados con CryptoJS
+            return dato;
+        }
+        return descifrarDatos(dato);
     } catch (error) {
-        console.error('Error al descifrar:', error);
-        return '';
+        console.error('Error al descifrar:', error.message);
+        // Devolver el valor original en lugar de fallar
+        return dato;
     }
 };
 
@@ -28,7 +38,8 @@ transportCtl.mostrarEmpresas = async (req, res) => {
             FROM transportCompanies tc
             LEFT JOIN transportRoutes tr ON tc.idTransportCompany = tr.companyId AND tr.stateRoute = 1
             LEFT JOIN transportVehicles tv ON tc.idTransportCompany = tv.companyId AND tv.stateVehicle = 1
-            LEFT JOIN transportReservations tres ON tv.idTransportVehicle = tres.vehicleId
+            LEFT JOIN transportSchedules ts ON tv.idTransportVehicle = ts.vehicleId
+            LEFT JOIN transportReservations tres ON ts.idTransportSchedule = tres.scheduleId
             WHERE tc.stateCompany = 1
             GROUP BY tc.idTransportCompany
             ORDER BY tc.statusCompany DESC, tc.ratingCompany DESC
@@ -36,11 +47,11 @@ transportCtl.mostrarEmpresas = async (req, res) => {
 
         const empresasCompletas = empresas.map(empresa => ({
             ...empresa,
-            nameCompany: descifrarSeguro(empresa.nameCompany),
-            contactEmail: descifrarSeguro(empresa.contactEmail),
-            contactPhone: descifrarSeguro(empresa.contactPhone),
-            addressCompany: descifrarSeguro(empresa.addressCompany),
-            websiteCompany: descifrarSeguro(empresa.websiteCompany),
+            nameCompany: empresa.nameCompany ? descifrarSeguro(empresa.nameCompany) : empresa.nameCompany,
+            contactEmail: empresa.contactEmail ? descifrarSeguro(empresa.contactEmail) : empresa.contactEmail,
+            contactPhone: empresa.contactPhone ? descifrarSeguro(empresa.contactPhone) : empresa.contactPhone,
+            addressCompany: empresa.addressCompany ? descifrarSeguro(empresa.addressCompany) : empresa.addressCompany,
+            websiteCompany: empresa.websiteCompany ? descifrarSeguro(empresa.websiteCompany) : empresa.websiteCompany,
             rutasActivas: empresa.rutasActivas || 0,
             vehiculosActivos: empresa.vehiculosActivos || 0,
             reservasTotales: empresa.reservasTotales || 0
@@ -110,31 +121,38 @@ transportCtl.crearEmpresa = async (req, res) => {
 transportCtl.mostrarRutas = async (req, res) => {
     try {
         const [rutas] = await sql.promise().query(`
-            SELECT tr.*, tc.nameCompany,
+            SELECT tr.*, 
+                   COALESCE(tc.nameCompany, 'Sin Empresa') as nameCompany,
                    COUNT(DISTINCT tv.idTransportVehicle) as vehiculosAsignados,
                    COUNT(DISTINCT ts.idTransportSchedule) as horariosActivos
             FROM transportRoutes tr
-            JOIN transportCompanies tc ON tr.companyId = tc.idTransportCompany
+            LEFT JOIN transportCompanies tc ON tr.companyId = tc.idTransportCompany AND tc.stateCompany = 1
             LEFT JOIN transportVehicles tv ON tr.idTransportRoute = tv.routeId AND tv.stateVehicle = 1
             LEFT JOIN transportSchedules ts ON tv.idTransportVehicle = ts.vehicleId AND ts.stateSchedule = 1
-            WHERE tr.stateRoute = 1 AND tc.stateCompany = 1
+            WHERE tr.stateRoute = 1
             GROUP BY tr.idTransportRoute
             ORDER BY tr.transportType ASC, tr.routeName ASC
         `);
 
         const rutasCompletas = await Promise.all(
             rutas.map(async (ruta) => {
-                // Obtener metadata de MongoDB
-                const metadata = await mongo.transportMetadataModel.findOne({
-                    idTransportSql: ruta.idTransportRoute.toString()
-                });
+                // Obtener metadata de MongoDB con manejo de errores
+                let metadata = null;
+                try {
+                    metadata = await mongo.transportMetadataModel.findOne({
+                        idTransportSql: ruta.idTransportRoute.toString()
+                    }).lean(); // lean() para obtener objetos planos de JS
+                } catch (error) {
+                    console.error('Error obteniendo metadata de MongoDB:', error.message);
+                    // Continuar sin metadata en caso de error
+                }
 
                 return {
                     ...ruta,
                     routeName: descifrarSeguro(ruta.routeName),
                     origin: descifrarSeguro(ruta.origin),
                     destination: descifrarSeguro(ruta.destination),
-                    nameCompany: descifrarSeguro(ruta.nameCompany),
+                    nameCompany: ruta.nameCompany === 'Sin Empresa' ? 'Sin Empresa' : (ruta.nameCompany ? descifrarSeguro(ruta.nameCompany) : ruta.nameCompany),
                     vehiculosAsignados: ruta.vehiculosAsignados || 0,
                     horariosActivos: ruta.horariosActivos || 0,
                     metadata: metadata ? {
@@ -164,18 +182,20 @@ transportCtl.crearRuta = async (req, res) => {
         } = req.body;
 
         // Validaciones
-        if (!routeName || !transportType || !origin || !destination || !companyId) {
-            return res.status(400).json({ message: 'Nombre, tipo, origen, destino y empresa son obligatorios' });
+        if (!routeName || !transportType || !origin || !destination) {
+            return res.status(400).json({ message: 'Nombre, tipo, origen y destino son obligatorios' });
         }
 
-        // Verificar que la empresa existe
-        const [empresaExiste] = await sql.promise().query(
-            'SELECT idTransportCompany FROM transportCompanies WHERE idTransportCompany = ? AND stateCompany = 1',
-            [companyId]
-        );
+        // Verificar que la empresa existe si se proporciona
+        if (companyId) {
+            const [empresaExiste] = await sql.promise().query(
+                'SELECT idTransportCompany FROM transportCompanies WHERE idTransportCompany = ? AND stateCompany = 1',
+                [companyId]
+            );
 
-        if (empresaExiste.length === 0) {
-            return res.status(404).json({ message: 'Empresa no encontrada' });
+            if (empresaExiste.length === 0) {
+                return res.status(404).json({ message: 'Empresa no encontrada' });
+            }
         }
 
         // Crear ruta
@@ -184,7 +204,7 @@ transportCtl.crearRuta = async (req, res) => {
             transportType: transportType,
             origin: cifrarDatos(origin),
             destination: cifrarDatos(destination),
-            companyId: parseInt(companyId),
+            companyId: companyId ? parseInt(companyId) : null,
             distanceKm: parseFloat(distanceKm) || 0,
             estimatedDuration: parseInt(estimatedDuration) || 0,
             routeCode: routeCode || '',
@@ -197,18 +217,23 @@ transportCtl.crearRuta = async (req, res) => {
 
         // Crear metadata en MongoDB
         if (gpsCoordinates || trafficPatterns || weatherImpact) {
-            await mongo.transportMetadataModel.create({
-                routeDetails: {
-                    gpsCoordinates: gpsCoordinates || [],
-                    trafficPatterns: trafficPatterns || [],
-                    weatherImpact: weatherImpact || {}
-                },
-                vehicleFeatures: {},
-                serviceLevel: {},
-                realTimeTracking: {},
-                operationalNotes: {},
-                idTransportSql: nuevaRuta.idTransportRoute.toString()
-            });
+            try {
+                await mongo.transportMetadataModel.create({
+                    routeDetails: {
+                        gpsCoordinates: gpsCoordinates || [],
+                        trafficPatterns: trafficPatterns || [],
+                        weatherImpact: weatherImpact || {}
+                    },
+                    vehicleFeatures: {},
+                    serviceLevel: {},
+                    realTimeTracking: {},
+                    operationalNotes: {},
+                    idTransportSql: nuevaRuta.idTransportRoute.toString()
+                });
+            } catch (error) {
+                console.error('Error creando metadata de ruta en MongoDB:', error.message);
+                // Continuar sin fallar si hay un problema con MongoDB
+            }
         }
 
         return res.status(201).json({ 
@@ -220,6 +245,142 @@ transportCtl.crearRuta = async (req, res) => {
         console.error('Error al crear ruta:', error);
         return res.status(500).json({ 
             message: 'Error al crear la ruta', 
+            error: error.message 
+        });
+    }
+};
+
+// Actualizar ruta
+transportCtl.actualizarRuta = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { 
+            routeName, transportType, origin, destination, companyId,
+            distanceKm, estimatedDuration, routeCode, waypoints, tollCosts,
+            statusRoute,
+            // Metadata adicional
+            gpsCoordinates, trafficPatterns, weatherImpact
+        } = req.body;
+
+        // Verificar que la ruta existe
+        const [rutaExiste] = await sql.promise().query(
+            'SELECT idTransportRoute FROM transportRoutes WHERE idTransportRoute = ? AND stateRoute = 1',
+            [id]
+        );
+
+        if (rutaExiste.length === 0) {
+            return res.status(404).json({ message: 'Ruta no encontrada' });
+        }
+
+        // Validaciones
+        if (!routeName || !transportType || !origin || !destination) {
+            return res.status(400).json({ message: 'Nombre, tipo, origen y destino son obligatorios' });
+        }
+
+        // Verificar que la empresa existe si se proporciona
+        if (companyId) {
+            const [empresaExiste] = await sql.promise().query(
+                'SELECT idTransportCompany FROM transportCompanies WHERE idTransportCompany = ? AND stateCompany = 1',
+                [companyId]
+            );
+
+            if (empresaExiste.length === 0) {
+                return res.status(404).json({ message: 'Empresa no encontrada' });
+            }
+        }
+
+        // Actualizar ruta
+        await sql.promise().query(
+            `UPDATE transportRoutes SET
+                routeName = ?,
+                transportType = ?,
+                origin = ?,
+                destination = ?,
+                companyId = ?,
+                distanceKm = ?,
+                estimatedDuration = ?,
+                routeCode = ?,
+                waypoints = ?,
+                tollCosts = ?,
+                statusRoute = ?,
+                updateRoute = ?
+            WHERE idTransportRoute = ?`,
+            [
+                cifrarDatos(routeName),
+                transportType,
+                cifrarDatos(origin),
+                cifrarDatos(destination),
+                companyId ? parseInt(companyId) : null,
+                parseFloat(distanceKm) || 0,
+                parseInt(estimatedDuration) || 0,
+                routeCode || '',
+                waypoints || '',
+                parseFloat(tollCosts) || 0,
+                statusRoute || 'active',
+                new Date().toLocaleString(),
+                id
+            ]
+        );
+
+        // Actualizar metadata en MongoDB si se proporciona
+        if (gpsCoordinates || trafficPatterns || weatherImpact) {
+            const metadataUpdate = {
+                routeDetails: {}
+            };
+            
+            if (gpsCoordinates) metadataUpdate.routeDetails.gpsCoordinates = gpsCoordinates;
+            if (trafficPatterns) metadataUpdate.routeDetails.trafficPatterns = trafficPatterns;
+            if (weatherImpact) metadataUpdate.routeDetails.weatherImpact = weatherImpact;
+            
+            try {
+                await mongo.transportMetadataModel.updateOne(
+                    { idTransportSql: id.toString() },
+                    { $set: metadataUpdate },
+                    { upsert: true }
+                );
+            } catch (error) {
+                console.error('Error actualizando metadata de ruta en MongoDB:', error.message);
+                // Continuar sin fallar si hay un problema con MongoDB
+            }
+        }
+
+        return res.json({ message: 'Ruta actualizada exitosamente' });
+
+    } catch (error) {
+        console.error('Error al actualizar ruta:', error);
+        return res.status(500).json({ 
+            message: 'Error al actualizar la ruta', 
+            error: error.message 
+        });
+    }
+};
+
+// Eliminar (desactivar) ruta
+transportCtl.eliminarRuta = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Verificar que la ruta existe
+        const [rutaExiste] = await sql.promise().query(
+            'SELECT idTransportRoute FROM transportRoutes WHERE idTransportRoute = ? AND stateRoute = 1',
+            [id]
+        );
+
+        if (rutaExiste.length === 0) {
+            return res.status(404).json({ message: 'Ruta no encontrada' });
+        }
+
+        // Desactivar ruta (soft delete)
+        await sql.promise().query(
+            'UPDATE transportRoutes SET stateRoute = 0, updateRoute = ? WHERE idTransportRoute = ?',
+            [new Date().toLocaleString(), id]
+        );
+
+        return res.json({ message: 'Ruta desactivada exitosamente' });
+    } catch (error) {
+        console.error('Error al eliminar ruta:', error);
+        return res.status(500).json({ 
+            message: 'Error al desactivar la ruta', 
             error: error.message 
         });
     }
@@ -247,10 +408,16 @@ transportCtl.obtenerVehiculosEmpresa = async (req, res) => {
 
         const vehiculosCompletos = await Promise.all(
             vehiculos.map(async (vehiculo) => {
-                // Obtener características del vehículo de MongoDB
-                const metadata = await mongo.transportMetadataModel.findOne({
-                    idTransportSql: vehiculo.idTransportVehicle.toString()
-                });
+                // Obtener características del vehículo de MongoDB con manejo de errores
+                let metadata = null;
+                try {
+                    metadata = await mongo.transportMetadataModel.findOne({
+                        idTransportSql: vehiculo.idTransportVehicle.toString()
+                    }).lean(); // lean() para obtener objetos planos de JS
+                } catch (error) {
+                    console.error('Error obteniendo metadata de vehículo de MongoDB:', error.message);
+                    // Continuar sin metadata en caso de error
+                }
 
                 return {
                     ...vehiculo,
@@ -320,20 +487,25 @@ transportCtl.crearVehiculo = async (req, res) => {
 
         // Crear características en MongoDB
         if (wifi || airConditioning || entertainment || accessibility || safety) {
-            await mongo.transportMetadataModel.create({
-                routeDetails: {},
-                vehicleFeatures: {
-                    wifi: wifi || false,
-                    airConditioning: airConditioning || false,
-                    entertainment: entertainment || [],
-                    accessibility: accessibility || {},
-                    safety: safety || {}
-                },
-                serviceLevel: {},
-                realTimeTracking: {},
-                operationalNotes: {},
-                idTransportSql: nuevoVehiculo.idTransportVehicle.toString()
-            });
+            try {
+                await mongo.transportMetadataModel.create({
+                    routeDetails: {},
+                    vehicleFeatures: {
+                        wifi: wifi || false,
+                        airConditioning: airConditioning || false,
+                        entertainment: entertainment || [],
+                        accessibility: accessibility || {},
+                        safety: safety || {}
+                    },
+                    serviceLevel: {},
+                    realTimeTracking: {},
+                    operationalNotes: {},
+                    idTransportSql: nuevoVehiculo.idTransportVehicle.toString()
+                });
+            } catch (error) {
+                console.error('Error creando metadata de vehículo en MongoDB:', error.message);
+                // Continuar sin fallar si hay un problema con MongoDB
+            }
         }
 
         return res.status(201).json({ 

@@ -22,7 +22,9 @@ function descifrarDatos(cifrado) {
         return datos;
     } catch (error) {
         console.error('Error al descifrar datos:', error.message);
-        throw error;
+        // Si falla la desencriptación, devolver el valor original
+        // Esto puede ocurrir si el dato no estaba encriptado
+        return cifrado;
     }
 }
 

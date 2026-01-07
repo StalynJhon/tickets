@@ -3,7 +3,7 @@ const router = express.Router();
 const { body, param } = require('express-validator');
 
 const { 
-    mostrarEmpresas, crearEmpresa, mostrarRutas, crearRuta,
+    mostrarEmpresas, crearEmpresa, mostrarRutas, crearRuta, actualizarRuta, eliminarRuta,
     obtenerVehiculosEmpresa, crearVehiculo, obtenerHorariosVehiculo,
     crearHorario, obtenerAsientosVehiculo, crearAsientosVehiculo,
     obtenerReservasHorario, crearReservaTransporte, buscarRutas,
@@ -23,7 +23,7 @@ const validacionRuta = [
     body('transportType').isIn(['bus', 'metro', 'flight', 'train', 'taxi', 'boat']).withMessage('Tipo de transporte inválido'),
     body('origin').notEmpty().withMessage('Origen es obligatorio'),
     body('destination').notEmpty().withMessage('Destino es obligatorio'),
-    body('companyId').isInt({ min: 1 }).withMessage('ID de empresa debe ser válido')
+    body('companyId').optional().isInt({ min: 1 }).withMessage('ID de empresa debe ser válido')
 ];
 
 const validacionVehiculo = [
@@ -58,6 +58,16 @@ router.post('/empresas/:companyId/vehiculos', validacionVehiculo, crearVehiculo)
 // Rutas de Rutas
 router.get('/rutas', mostrarRutas);
 router.post('/rutas', validacionRuta, crearRuta);
+const validacionRutaUpdate = [
+    body('routeName').optional().notEmpty().withMessage('Nombre de la ruta no puede estar vacío si se proporciona'),
+    body('transportType').optional().isIn(['bus', 'metro', 'flight', 'train', 'taxi', 'boat']).withMessage('Tipo de transporte inválido'),
+    body('origin').optional().notEmpty().withMessage('Origen no puede estar vacío si se proporciona'),
+    body('destination').optional().notEmpty().withMessage('Destino no puede estar vacío si se proporciona'),
+    body('companyId').optional().isInt({ min: 1 }).withMessage('ID de empresa debe ser válido')
+];
+
+router.put('/rutas/:id', validacionRutaUpdate, actualizarRuta);
+router.delete('/rutas/:id', eliminarRuta);
 router.get('/rutas/buscar', buscarRutas);
 
 // Rutas de Vehículos y Horarios
