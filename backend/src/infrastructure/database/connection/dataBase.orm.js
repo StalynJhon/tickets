@@ -94,6 +94,7 @@ const staffModel = require('../sql/staff');
 const staffAssignmentModel = require('../sql/staffAssignments');
 const clienteModel = require('../sql/cliente');
 const configuracionModel = require('../sql/configuracion');
+const promotionModel = require('../sql/promotions');
 
 
 
@@ -134,6 +135,7 @@ const Staff = staffModel(sequelize, Sequelize);
 const StaffAssignment = staffAssignmentModel(sequelize, Sequelize);
 const cliente = clienteModel(sequelize, Sequelize);
 const Configuracion = configuracionModel(sequelize, Sequelize);
+const Promotion = promotionModel(sequelize, Sequelize);
 
 
 //relaciones o foreingKeys
@@ -289,4 +291,5 @@ module.exports = {
     StaffAssignment,
     cliente,
     Configuracion,
+    Promotion,
 };

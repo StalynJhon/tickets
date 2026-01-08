@@ -18,10 +18,10 @@ const descifrarSeguro = (dato) => {
 usuarioCtl.mostrarUsuarios = async (req, res) => {
     try {
         const [listaUsuarios] = await sql.promise().query(`
-            SELECT u.*, GROUP_CONCAT(DISTINCT r.nameRol SEPARATOR ', ') as roles
+            SELECT u.*, GROUP_CONCAT(DISTINCT r.nameRole SEPARATOR ', ') as roles
             FROM users u
             LEFT JOIN detallerols dr ON u.idUser = dr.userIdUser
-            LEFT JOIN roles r ON dr.roleIdRol = r.idRol AND r.stateRol = 'activo'
+            LEFT JOIN roles r ON dr.roleIdRole = r.idRole AND r.stateRole = 'active'
             WHERE u.stateUser = 'active'
             GROUP BY u.idUser
             ORDER BY u.createUser DESC
@@ -33,7 +33,6 @@ usuarioCtl.mostrarUsuarios = async (req, res) => {
             phoneUser: descifrarSeguro(usuario.phoneUser),
             emailUser: descifrarSeguro(usuario.emailUser),
             userName: descifrarSeguro(usuario.userName),
-            // No incluir la contraseña en la respuesta
             passwordUser: undefined,
             roles: usuario.roles || 'Sin roles asignados'
         }));
@@ -50,12 +49,10 @@ usuarioCtl.crearUsuario = async (req, res) => {
     try {
         const { nameUsers, phoneUser, emailUser, userName, passwordUser, roles } = req.body;
 
-        // Validación de campos requeridos
         if (!nameUsers || !emailUser || !userName || !passwordUser) {
             return res.status(400).json({ message: 'Nombre, email, usuario y contraseña son obligatorios' });
         }
 
-        // Verificar si el usuario ya existe
         const [usuarioExiste] = await sql.promise().query(
             'SELECT idUser FROM users WHERE userName = ? OR emailUser = ?',
             [cifrarDatos(userName), cifrarDatos(emailUser)]
@@ -65,10 +62,8 @@ usuarioCtl.crearUsuario = async (req, res) => {
             return res.status(400).json({ message: 'Ya existe un usuario con este nombre de usuario o email' });
         }
 
-        // Encriptar contraseña
         const hashedPassword = await bcrypt.hash(passwordUser, 10);
 
-        // Crear usuario en SQL
         const nuevoUsuario = await orm.usuario.create({
             nameUsers: cifrarDatos(nameUsers),
             phoneUser: cifrarDatos(phoneUser || ''),
@@ -79,12 +74,11 @@ usuarioCtl.crearUsuario = async (req, res) => {
             createUser: new Date().toLocaleString(),
         });
 
-        // Asignar roles si se proporcionan
         if (roles && Array.isArray(roles) && roles.length > 0) {
             for (const rolId of roles) {
                 await orm.detalleRol.create({
                     userIdUser: nuevoUsuario.idUser,
-                    roleIdRol: rolId,
+                    roleIdRole: rolId,
                     createDetalleRol: new Date().toLocaleString()
                 });
             }
@@ -110,12 +104,10 @@ usuarioCtl.actualizarUsuario = async (req, res) => {
         const { id } = req.params;
         const { nameUsers, phoneUser, emailUser, userName, passwordUser, roles } = req.body;
 
-        // Validar campos básicos
         if (!nameUsers || !emailUser || !userName) {
             return res.status(400).json({ message: 'Nombre, email y usuario son obligatorios' });
         }
 
-        // Verificar si existe el usuario
         const [usuarioExiste] = await sql.promise().query(
             'SELECT idUser FROM users WHERE idUser = ? AND stateUser = "active"',
             [id]
@@ -125,7 +117,6 @@ usuarioCtl.actualizarUsuario = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // Verificar si el nuevo userName o email ya existen (excluyendo el usuario actual)
         const [duplicado] = await sql.promise().query(
             'SELECT idUser FROM users WHERE (userName = ? OR emailUser = ?) AND idUser != ? AND stateUser = "active"',
             [cifrarDatos(userName), cifrarDatos(emailUser), id]
@@ -135,7 +126,6 @@ usuarioCtl.actualizarUsuario = async (req, res) => {
             return res.status(400).json({ message: 'Ya existe otro usuario con este nombre de usuario o email' });
         }
 
-        // Preparar datos para actualizar
         let updateData = {
             nameUsers: cifrarDatos(nameUsers),
             phoneUser: cifrarDatos(phoneUser || ''),
@@ -144,12 +134,10 @@ usuarioCtl.actualizarUsuario = async (req, res) => {
             updateUser: new Date().toLocaleString()
         };
 
-        // Si se proporciona nueva contraseña, encriptarla
         if (passwordUser) {
             updateData.passwordUser = await bcrypt.hash(passwordUser, 10);
         }
 
-        // Actualizar usuario en SQL
         await sql.promise().query(
             `UPDATE users SET 
                 nameUsers = ?, 
@@ -164,19 +152,16 @@ usuarioCtl.actualizarUsuario = async (req, res) => {
                 [updateData.nameUsers, updateData.phoneUser, updateData.emailUser, updateData.userName, updateData.updateUser, id]
         );
 
-        // Actualizar roles si se proporcionan
         if (roles && Array.isArray(roles)) {
-            // Eliminar roles existentes
             await sql.promise().query(
                 'DELETE FROM detallerols WHERE userIdUser = ?',
                 [id]
             );
             
-            // Crear nuevas relaciones de roles
             for (const rolId of roles) {
                 await orm.detalleRol.create({
                     userIdUser: id,
-                    roleIdRol: rolId,
+                    roleIdRole: rolId,
                     createDetalleRol: new Date().toLocaleString()
                 });
             }
@@ -195,7 +180,6 @@ usuarioCtl.eliminarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Verificar si el usuario existe
         const [usuarioExiste] = await sql.promise().query(
             'SELECT idUser FROM users WHERE idUser = ? AND stateUser = "active"',
             [id]
@@ -205,7 +189,6 @@ usuarioCtl.eliminarUsuario = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // Desactivar usuario
         await sql.promise().query(
             `UPDATE users SET 
                 stateUser = 'inactive', 
@@ -236,12 +219,11 @@ usuarioCtl.obtenerUsuario = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // Obtener roles del usuario
         const [rolesUsuario] = await sql.promise().query(`
             SELECT r.*, dr.createDetalleRol
             FROM detallerols dr
-            JOIN roles r ON dr.roleIdRol = r.idRol
-            WHERE dr.userIdUser = ? AND r.stateRol = 'activo'
+            JOIN roles r ON dr.roleIdRole = r.idRole
+            WHERE dr.userIdUser = ? AND r.stateRole = 'active'
         `, [id]);
 
         const usuarioCompleto = {
@@ -250,12 +232,11 @@ usuarioCtl.obtenerUsuario = async (req, res) => {
             phoneUser: descifrarSeguro(usuario[0].phoneUser),
             emailUser: descifrarSeguro(usuario[0].emailUser),
             userName: descifrarSeguro(usuario[0].userName),
-            // No incluir la contraseña
             passwordUser: undefined,
             roles: rolesUsuario.map(rol => ({
                 ...rol,
-                nameRol: descifrarSeguro(rol.nameRol),
-                descriptionRol: descifrarSeguro(rol.descriptionRol)
+                nameRole: descifrarSeguro(rol.nameRole),
+                descriptionRole: descifrarSeguro(rol.descriptionRole)
             }))
         };
 
@@ -276,10 +257,10 @@ usuarioCtl.buscarUsuarios = async (req, res) => {
         }
 
         const [usuariosEncontrados] = await sql.promise().query(`
-            SELECT u.*, GROUP_CONCAT(DISTINCT r.nameRol SEPARATOR ', ') as roles
+            SELECT u.*, GROUP_CONCAT(DISTINCT r.nameRole SEPARATOR ', ') as roles
             FROM users u
             LEFT JOIN detallerols dr ON u.idUser = dr.userIdUser
-            LEFT JOIN roles r ON dr.roleIdRol = r.idRol AND r.stateRol = 'activo'
+            LEFT JOIN roles r ON dr.roleIdRole = r.idRole AND r.stateRole = 'active'
             WHERE u.stateUser = 'active' AND (
                 u.nameUsers LIKE ? OR 
                 u.emailUser LIKE ? OR 
@@ -315,14 +296,13 @@ usuarioCtl.asignarRol = async (req, res) => {
             return res.status(400).json({ message: 'Usuario y rol son obligatorios' });
         }
 
-        // Verificar que el usuario y el rol existen
         const [usuario] = await sql.promise().query(
             'SELECT idUser FROM users WHERE idUser = ? AND stateUser = "active"',
             [usuarioId]
         );
 
         const [rol] = await sql.promise().query(
-            'SELECT idRol FROM roles WHERE idRol = ? AND stateRol = "activo"',
+            'SELECT idRole FROM roles WHERE idRole = ? AND stateRole = "active"',
             [rolId]
         );
 
@@ -334,9 +314,8 @@ usuarioCtl.asignarRol = async (req, res) => {
             return res.status(404).json({ message: 'Rol no encontrado' });
         }
 
-        // Verificar si ya existe la relación
         const [relacionExiste] = await sql.promise().query(
-            'SELECT idDetalleRol FROM detallerols WHERE userIdUser = ? AND roleIdRol = ?',
+            'SELECT idDetalleRol FROM detallerols WHERE userIdUser = ? AND roleIdRole = ?',
             [usuarioId, rolId]
         );
 
@@ -344,10 +323,9 @@ usuarioCtl.asignarRol = async (req, res) => {
             return res.status(400).json({ message: 'El usuario ya tiene este rol asignado' });
         }
 
-        // Crear nueva relación
         await orm.detalleRol.create({
             userIdUser: usuarioId,
-            roleIdRol: rolId,
+            roleIdRole: rolId,
             createDetalleRol: new Date().toLocaleString()
         });
 
@@ -369,7 +347,7 @@ usuarioCtl.removerRol = async (req, res) => {
         }
 
         const resultado = await sql.promise().query(
-            'DELETE FROM detallerols WHERE userIdUser = ? AND roleIdRol = ?',
+            'DELETE FROM detallerols WHERE userIdUser = ? AND roleIdRole = ?',
             [usuarioId, rolId]
         );
 
@@ -423,14 +401,13 @@ usuarioCtl.obtenerEstadisticas = async (req, res) => {
             FROM users
         `);
 
-        // Usuarios por rol
         const [usuariosPorRol] = await sql.promise().query(`
-            SELECT r.nameRol, COUNT(dr.userIdUser) as cantidadUsuarios
+            SELECT r.nameRole, COUNT(dr.userIdUser) as cantidadUsuarios
             FROM roles r
-            LEFT JOIN detallerols dr ON r.idRol = dr.roleIdRol
+            LEFT JOIN detallerols dr ON r.idRole = dr.roleIdRole
             LEFT JOIN users u ON dr.userIdUser = u.idUser AND u.stateUser = 'active'
-            WHERE r.stateRol = 'activo'
-            GROUP BY r.idRol, r.nameRol
+            WHERE r.stateRole = 'active'
+            GROUP BY r.idRole, r.nameRole
             ORDER BY cantidadUsuarios DESC
         `);
 
@@ -438,7 +415,7 @@ usuarioCtl.obtenerEstadisticas = async (req, res) => {
             estadisticas: estadisticas[0],
             usuariosPorRol: usuariosPorRol.map(item => ({
                 ...item,
-                nameRol: descifrarSeguro(item.nameRol)
+                nameRole: descifrarSeguro(item.nameRole)
             }))
         });
     } catch (error) {
