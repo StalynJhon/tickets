@@ -1,13 +1,14 @@
 /* =========================
-   MODERN LAYOUT STYLES
+   MODERN LAYOUT STYLES - CYBERPUNK (AZUL CELESTE)
    ========================= */
 .configuracion-layout {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #0080ff 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, #0B0C10 0%, #1F2833 100%);
   min-height: 100vh;
+  color: #C5C6C7;
 }
 
 /* =========================
@@ -17,9 +18,9 @@
   text-align: center;
   margin-bottom: 40px;
   padding: 40px 20px;
-  background: linear-gradient(120deg, #ffffff 0%, #f1f5f9 100%);
+  background: linear-gradient(120deg, #1F2833 0%, #302B63 100%);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 25px rgba(102, 252, 241, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -27,18 +28,15 @@
 .hero-header::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(45deg, rgba(102,252,241,0.2) 0%, rgba(102,252,241,0) 50%);
   pointer-events: none;
 }
 
 .hero-header h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #1e293b 0%, #64748b 100%);
+  background: linear-gradient(135deg, #66FCF1 0%, #45A29E 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -49,7 +47,7 @@
 
 .hero-header .subtitle {
   font-size: 1.1rem;
-  color: #64748b;
+  color: #C5C6C7;
   margin: 0 0 25px 0;
   animation: fadeInUp 0.8s ease 0.2s both;
 }
@@ -76,25 +74,26 @@
 .search-input {
   width: 320px;
   padding: 14px 20px 14px 50px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #66FCF1;
   border-radius: 16px;
   font-size: 1rem;
-  background: #ffffff;
+  background: #1F2833;
+  color: #C5C6C7;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 0 10px rgba(102,252,241,0.2);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  transform: translateY(-2px);
+  border-color: #66FCF1;
+  box-shadow: 0 0 12px rgba(102,252,241,0.5);
+  transform: translateY(-1px);
 }
 
 .search-icon {
   position: absolute;
   left: 18px;
-  color: #94a3b8;
+  color: #66FCF1;
   font-size: 1.1rem;
   pointer-events: none;
 }
@@ -107,39 +106,40 @@
 
 .filtro-btn {
   padding: 10px 20px;
-  border: 2px solid #e2e8f0;
-  background: #ffffff;
+  border: 2px solid #66FCF1;
+  background: #1F2833;
   border-radius: 12px;
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #64748b;
+  color: #C5C6C7;
+  box-shadow: 0 0 8px rgba(102,252,241,0.1);
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .filtro-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: #302B63;
   transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(102,252,241,0.2);
 }
 
 .filtro-btn.active {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  border-color: #3b82f6;
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #66FCF1 0%, #45A29E 100%);
+  border-color: #66FCF1;
+  color: #0B0C10;
+  box-shadow: 0 0 20px rgba(102,252,241,0.5);
 }
 
 /* =========================
    FORM STYLES
    ========================= */
 .config-form {
-  background: #ffffff;
+  background: #1F2833;
   border-radius: 20px;
   padding: 30px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 25px rgba(102,252,241,0.2);
   animation: fadeInUp 0.8s ease 0.6s both;
+  color: #C5C6C7;
 }
 
 .header-actions {
@@ -157,35 +157,32 @@
   gap: 25px;
 }
 
-/* =========================
-   CARD STYLES
-   ========================= */
 .config-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: #1F2833;
   border-radius: 20px;
   padding: 0;
   position: relative;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 0 15px rgba(102,252,241,0.3);
+  border: 1px solid #66FCF1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
+  transition: all 0.3s ease;
 }
 
 .config-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 25px rgba(102,252,241,0.5), 0 0 40px rgba(102,252,241,0.3);
 }
 
 .config-card h4 {
   margin: 0 0 15px 0;
   font-size: 1.3rem;
-  color: #1e293b;
+  color: #66FCF1;
   font-weight: 600;
   text-align: center;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #302B63;
   padding-bottom: 12px;
 }
 
@@ -203,13 +200,13 @@
 
 .card-field {
   margin: 0 0 10px 0;
-  color: #475569;
+  color: #C5C6C7;
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
 .card-field strong {
-  color: #334155;
+  color: #66FCF1;
   font-weight: 600;
   margin-right: 5px;
 }
@@ -220,13 +217,13 @@
   align-items: center;
   margin-top: auto;
   padding-top: 15px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #302B63;
 }
 
 .card-actions {
   padding: 15px 25px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: #302B63;
+  border-top: 1px solid #302B63;
   display: flex;
   gap: 10px;
   justify-content: flex-end;
@@ -247,42 +244,40 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(102,252,241,0.2);
 }
 
 .btn:hover {
   opacity: 0.95;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px rgba(102,252,241,0.4);
 }
 
 .btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 8px rgba(102,252,241,0.2);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #66FCF1 0%, #45A29E 100%);
+  color: #0B0C10;
+  box-shadow: 0 0 12px rgba(102,252,241,0.6);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #45A29E 0%, #66FCF1 100%);
+  box-shadow: 0 0 20px rgba(102,252,241,0.8);
 }
 
 .btn-cancelar {
-  background: #64748b;
-  color: white;
-  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+  background: #302B63;
+  color: #C5C6C7;
+  box-shadow: 0 0 12px rgba(102,252,241,0.4);
 }
 
 .btn-cancelar:hover {
-  background: #475569;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4);
+  background: #1F2833;
+  box-shadow: 0 0 18px rgba(102,252,241,0.6);
 }
 
 .btn-card-action {
@@ -295,23 +290,23 @@
   font-size: 0.9rem;
   transition: all 0.2s ease;
   min-width: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(102,252,241,0.2);
 }
 
 .btn-edit-card {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: white;
 }
 
 .btn-delete-card {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: white;
 }
 
 .btn-card-action:hover {
   opacity: 0.9;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px rgba(102,252,241,0.4);
 }
 
 /* =========================
@@ -320,7 +315,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(11, 12, 16, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -329,80 +324,47 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: #1F2833;
   padding: 30px;
   width: 500px;
   max-width: 90vw;
   border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 25px rgba(102,252,241,0.4);
   animation: aparecer 0.3s ease;
   position: relative;
-}
-
-@keyframes aparecer {
-  from {
-    opacity: 0;
-    transform: translateY(-30px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  color: #C5C6C7;
 }
 
 .modal h2 {
   text-align: center;
   font-size: 1.5rem;
   margin: 0 0 25px 0;
-  color: #1e293b;
+  color: #66FCF1;
   font-weight: 700;
 }
 
-/* =========================
-   FORMULARIO
-   ========================= */
 .modal input,
-.modal textarea {
+.modal textarea,
+.form-control {
   width: 100%;
   margin-bottom: 16px;
   padding: 14px 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #66FCF1;
   border-radius: 12px;
   font-size: 1rem;
   box-sizing: border-box;
   transition: all 0.3s ease;
-  background: #f8fafc;
+  background: #0B0C10;
+  color: #C5C6C7;
 }
 
 .modal input:focus,
-.modal textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  background: #ffffff;
-}
-
-.modal textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.form-control {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 2px solid #e2e8f0;
-  margin-bottom: 16px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: #f8fafc;
-}
-
+.modal textarea:focus,
 .form-control:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  background: #ffffff;
+  border-color: #66FCF1;
+  box-shadow: 0 0 12px rgba(102,252,241,0.5);
+  background: #1F2833;
 }
 
 /* =========================
@@ -415,75 +377,43 @@
   margin-top: 20px;
 }
 
-.modal-actions button {
-  flex: 1;
-  padding: 12px 0;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-}
-
 .modal-actions button[type="submit"] {
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   color: white;
 }
 
 .modal-actions button[type="button"] {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: white;
 }
 
 .modal-actions button:hover {
   opacity: 0.95;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px rgba(102,252,241,0.4);
 }
 
 /* =========================
    ANIMACIONES
    ========================= */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* =========================
    RESPONSIVE
    ========================= */
 @media (max-width: 768px) {
-  .hero-header h1 {
-    font-size: 2rem;
-  }
-  
-  .search-filtro-bar {
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .search-input {
-    width: 100%;
-  }
-  
-  .cards-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .config-form {
-    padding: 20px;
-  }
-  
-  .modal {
-    margin: 20px;
-    width: auto;
-  }
+  .hero-header h1 { font-size: 2rem; }
+  .search-filtro-bar { flex-direction: column; gap: 15px; }
+  .search-input { width: 100%; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .config-form { padding: 20px; }
+  .modal { margin: 20px; width: auto; }
 }

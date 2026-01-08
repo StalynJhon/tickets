@@ -2,21 +2,22 @@
    ESTILOS GENERALES (CATÁLOGO DE EVENTOS)
 ================================ */
 .configuracion-layout {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: linear-gradient(135deg, #0b0c1c 0%, #1a1a40 100%);
   border-radius: 24px;
   padding: 0;
   margin: 20px 0;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   min-height: 80vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow: hidden;
+  color: #c0d6ff;
 }
 
 /* ===============================
    HERO HEADER
 ================================ */
 .hero-header {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   padding: 60px 40px 40px;
   text-align: center;
   position: relative;
@@ -30,7 +31,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
   z-index: 0;
 }
 
@@ -42,7 +43,7 @@
 .hero-header h1 {
   font-size: 3.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00f0ff 0%, #3a86ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -52,7 +53,7 @@
 
 .hero-header .subtitle {
   font-size: 1.4rem;
-  color: #64748b;
+  color: #80aaff;
   margin: 0 0 30px 0;
   font-weight: 400;
 }
@@ -78,18 +79,19 @@
 .search-input {
   width: 100%;
   padding: 14px 50px 14px 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #3a3f5c;
   border-radius: 16px;
   font-size: 1rem;
-  background: white;
+  background: #0f172a;
+  color: #c0d6ff;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+  border-color: #00f0ff;
+  box-shadow: 0 8px 20px rgba(0,255,255,0.2);
 }
 
 .search-icon {
@@ -98,7 +100,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: #80aaff;
 }
 
 .filtro-options {
@@ -108,27 +110,27 @@
 
 .filtro-btn {
   padding: 10px 20px;
-  border: 2px solid #e2e8f0;
-  background: white;
+  border: 2px solid #3a3f5c;
+  background: #0f172a;
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #64748b;
+  color: #80aaff;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .filtro-btn:hover {
-  border-color: #cbd5e0;
-  color: #475569;
+  border-color: #00f0ff;
+  color: #00f0ff;
 }
 
 .filtro-btn.active {
-  background: #667eea;
-  border-color: #667eea;
-  color: white;
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
+  background: #00f0ff;
+  border-color: #00f0ff;
+  color: #0f172a;
+  box-shadow: 0 8px 16px rgba(0,255,255,0.3);
 }
 
 /* ===============================
@@ -139,60 +141,50 @@
   flex-direction: column;
   gap: 32px;
   padding: 40px;
-  background: #ffffff;
+  background: #0f172a;
+  color: #c0d6ff;
 }
 
 /* ===============================
-   CARDS (IGUAL A EVENTOS)
+   CARDS
 ================================ */
 .config-card {
-  background: white; 
+  background: #1a1a40;
   border-radius: 24px;
   overflow: hidden;
   transition: all 0.4s ease;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid #3a3f5c;
   animation: fadeInUp 0.6s ease both;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .config-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0,0,0,0.08);
-  border-color: #c7d2fe;
+  box-shadow: 0 25px 60px rgba(0,255,255,0.2);
+  border-color: #00f0ff;
 }
 
 /* ===============================
    CARD HEADER
 ================================ */
 .card-header {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, #1a1a40 0%, #162447 100%);
   padding: 28px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #3a3f5c;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .card-header:hover {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, #162447 0%, #1e293b 100%);
 }
 
 .card-header h3 {
   margin: 0;
-  color: #1e293b;
+  color: #c0d6ff;
   font-size: 1.5rem;
   font-weight: 700;
   display: flex;
@@ -201,7 +193,7 @@
 }
 
 .card-header h3 i {
-  color: #667eea;
+  color: #00f0ff;
   font-size: 1.6rem;
 }
 
@@ -210,7 +202,7 @@
   padding: 10px;
   border-radius: 50%;
   transition: all 0.3s ease;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(0, 240, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,25 +211,25 @@
 }
 
 .card-toggle:hover {
-  background: rgba(102, 126, 234, 0.2);
+  background: rgba(0, 240, 255, 0.2);
   transform: scale(1.05);
 }
 
 .card-toggle i {
-  color: #667eea;
+  color: #00f0ff;
   font-size: 1.3rem;
   transition: transform 0.3s ease;
 }
 
 /* ===============================
-   CARD CONTENT (ANIMADO)
+   CARD CONTENT
 ================================ */
 .card-content {
   padding: 0;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease, padding 0.4s ease;
-  background: #fafbfe;
+  background: #162447;
 }
 
 .card-content.expanded {
@@ -246,256 +238,61 @@
   animation: slideDown 0.4s ease both;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-  }
-  to {
-    opacity: 1;
-    max-height: 2000px;
-  }
-}
-
-/* ===============================
-   GRID (TIPO CARDS GRID)
-================================ */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 36px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-group label {
-  margin-bottom: 14px;
-  font-weight: 600;
-  color: #334155;
-  font-size: 1.05rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 /* ===============================
    INPUTS
 ================================ */
 .form-control {
   width: 100%;
   padding: 16px 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #3a3f5c;
   border-radius: 16px;
   font-size: 1.05rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+  background-color: #0f172a;
+  color: #c0d6ff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   border-bottom-width: 3px;
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
-  border-bottom-color: #764ba2;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  border-color: #00f0ff;
+  border-bottom-color: #3a86ff;
+  box-shadow: 0 8px 24px rgba(0,255,255,0.2);
   transform: translateY(-2px);
 }
 
 .form-control::placeholder {
-  color: #cbd5e0;
+  color: #80aaff;
   font-style: italic;
-}
-
-/* ===============================
-   INPUT HELPER
-================================ */
-.input-helper {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-top: 10px;
-  display: block;
-  background: #f8fafc;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border-left: 4px solid #c7d2fe;
-  font-style: italic;
-}
-
-/* ===============================
-   LOGO PREVIEW
-================================ */
-.logo-preview {
-  margin-top: 18px;
-  display: flex;
-  justify-content: center;
-}
-
-.logo-image {
-  max-width: 180px;
-  max-height: 100px;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  object-fit: contain;
-  border: 1px solid #e2e8f0;
-  transition: transform 0.3s ease;
-}
-
-.logo-image:hover {
-  transform: scale(1.05);
-}
-
-/* ===============================
-   COLOR PICKERS
-================================ */
-.color-pickers {
-  display: flex;
-  gap: 28px;
-  flex-wrap: wrap;
-}
-
-.color-picker-item {
-  flex: 1;
-  min-width: 180px;
-}
-
-.color-picker-item label {
-  display: block;
-  margin-bottom: 12px;
-  font-weight: 600;
-  color: #334155;
-  font-size: 1rem;
-}
-
-.color-picker-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.color-input {
-  width: 56px;
-  height: 50px;
-  border: 2px solid #e2e8f0;
-  border-radius: 14px;
-  cursor: pointer;
-  background: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: all 0.3s ease;
-}
-
-.color-input:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-}
-
-.color-input::-webkit-color-swatch {
-  border: none;
-  border-radius: 10px;
-}
-
-.color-input::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-
-.color-value {
-  font-size: 0.9rem;
-  color: #64748b;
-  font-family: monospace;
-  background: #f8fafc;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  font-weight: 500;
-}
-
-/* ===============================
-   TEXTAREAS
-================================ */
-.textarea-lg {
-  min-height: 200px;
-}
-
-.textarea-md {
-  min-height: 150px;
 }
 
 /* ===============================
    CHECKBOX
 ================================ */
-.checkbox-wrapper {
-  margin-bottom: 12px;
-}
-
-.checkbox-container {
-  display: block;
-  position: relative;
-  padding-left: 44px;
-  cursor: pointer;
-  font-size: 1.05rem;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  font-weight: 500;
-  color: #334155;
-  padding-top: 4px;
-}
-
-.checkbox-container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
 .checkmark {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  height: 26px;
-  width: 26px;
-  background-color: #fff;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.checkbox-container:hover input ~ .checkmark {
-  border-color: #667eea;
+  background-color: #0f172a;
+  border: 2px solid #3a3f5c;
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background-color: #667eea;
-  border-color: #667eea;
+  background-color: #00f0ff;
+  border-color: #00f0ff;
 }
 
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
+/* ===============================
+   BOTÓN FINAL
+================================ */
+.btn-primary {
+  background: linear-gradient(135deg, #00f0ff 0%, #3a86ff 100%);
+  color: #0f172a;
 }
 
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.checkbox-container .checkmark:after {
-  left: 8px;
-  top: 4px;
-  width: 6px;
-  height: 12px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3a86ff 0%, #00f0ff 100%);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,255,255,0.3);
 }
 
 /* ===============================

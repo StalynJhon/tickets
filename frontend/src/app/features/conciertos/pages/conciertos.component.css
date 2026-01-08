@@ -1,185 +1,171 @@
 /* ===============================
-   CONTENEDOR GENERAL
-   =============================== */
-.concerts-container {
-  min-height: 100vh;
-  padding: 2rem 1rem;
-  background: linear-gradient(180deg, #0B0C10, #050608);
+   FONDO GLOBAL
+================================ */
+html, body {
+  background: #0B0C10;
   color: #C5C6C7;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* TITULOS */
-.concerts-container h2 {
-  text-align: center;
-  color: #66FCF1;
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ===============================
-   FORMULARIO EN 2 COLUMNAS CON LABELS ARRIBA
-   =============================== */
-.concerts-container form {
-  background: #1F2833;
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  max-width: 700px;
-  width: 100%;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(102, 252, 241, 0.35);
-  box-shadow: 0 0 20px rgba(102, 252, 241, 0.25),
-              0 0 40px rgba(102, 252, 241, 0.1);
-  
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas */
-  gap: 1rem 1rem;
+   ENCABEZADOS
+================================ */
+h2 {
+  color: #66FCF1;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 16px 0 10px;
 }
 
-/* Cada campo (label + input/textarea) */
+h3 {
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+/* ===============================
+   FORMULARIO COMPACTO
+================================ */
+form {
+  background: #1F2833;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(102, 252, 241, 0.15);
+  margin-bottom: 25px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas horizontales */
+  gap: 12px;
+}
+
 .form-field {
   display: flex;
   flex-direction: column;
 }
 
-/* Inputs y Textareas ocupan todo su contenedor */
-.concerts-container input,
-.concerts-container textarea {
-  width: 100%;
-  padding: 8px 10px;
+.form-field.full-width {
+  grid-column: span 4; /* ocupa toda la fila */
+}
+
+label {
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea {
+  padding: 6px 8px;
   border-radius: 6px;
-  border: 1px solid rgba(102, 252, 241, 0.25);
+  border: 1px solid rgba(102, 252, 241, 0.3);
   background: #0B0C10;
   color: #FFFFFF;
-  font-size: 0.95rem;
-  transition: all 0.25s ease;
-  margin-top: 4px; /* Espacio entre label y input */
+  font-size: 0.85rem;
 }
 
-.concerts-container textarea {
+textarea {
   resize: vertical;
-  min-height: 50px;
-}
-
-.concerts-container input:focus,
-.concerts-container textarea:focus {
-  outline: none;
-  border-color: #66FCF1;
-  box-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
 }
 
 /* ===============================
-   BOTÓN
-   =============================== */
-.concerts-container button {
-  grid-column: 1 / -1; /* Ocupa todo el ancho */
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-
+   BOTÓN DE ENVÍO
+================================ */
+button[type="submit"] {
   background: #66FCF1;
   color: #0B0C10;
-  box-shadow: 0 0 12px rgba(102, 252, 241, 0.5);
-  transition: all 0.25s ease;
-  margin-top: 0.5rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 0 12px rgba(102, 252, 241, 0.4);
+  grid-column: span 4; /* ocupa toda la fila */
+  font-size: 0.9rem;
 }
 
-.concerts-container button:hover:not(:disabled) {
+button[type="submit"]:hover:not(:disabled) {
   background: #45a29e;
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 18px rgba(102, 252, 241, 0.8),
-    0 0 30px rgba(102, 252, 241, 0.5);
+  box-shadow: 0 0 20px rgba(102, 252, 241, 0.6);
 }
 
-.concerts-container button:disabled {
+button[type="submit"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* ===============================
    MENSAJES
-   =============================== */
-.concerts-container p {
-  text-align: center;
-  margin-top: 0.8rem;
-  font-weight: 600;
-  font-size: 0.95rem;
+================================ */
+p[ngIf] {
+  font-weight: 500;
+  margin-top: 4px;
+  font-size: 0.85rem;
 }
 
-/* SEPARADOR */
-.concerts-container hr {
-  margin: 2rem auto;
-  max-width: 600px;
-  border: none;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(102, 252, 241, 0.6),
-    transparent
-  );
+p[ngIf][style*="color: red"] {
+  color: #ef4444;
+}
+
+p[ngIf][style*="color: green"] {
+  color: #22c55e;
 }
 
 /* ===============================
-   LISTA DE CONCIERTOS
-   =============================== */
-.concerts-container ul {
+   LISTADO DE CONCIERTOS
+================================ */
+ul {
   list-style: none;
   padding: 0;
-  max-width: 700px;
-  width: 100%;
+  margin: 0;
 }
 
 .concert-card {
   background: #1F2833;
+  padding: 12px 16px;
   border-radius: 12px;
-  padding: 1rem 1.2rem;
-  margin-bottom: 1rem;
-  border: 1px solid rgba(102, 252, 241, 0.25);
-  box-shadow: 0 0 12px rgba(102, 252, 241, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
+  margin-bottom: 10px;
+  box-shadow: 0 0 10px rgba(102, 252, 241, 0.12);
+  transition: 0.25s;
 }
 
 .concert-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 0 20px rgba(102, 252, 241, 0.5),
-    0 0 35px rgba(102, 252, 241, 0.2);
-}
-
-.concert-card h3 {
-  margin: 0 0 4px;
-  font-size: 1.2rem;
-  color: #FFFFFF;
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(102, 252, 241, 0.25);
 }
 
 .tour-name {
+  font-size: 0.8rem;
   color: #66FCF1;
-  font-weight: 600;
-  margin-bottom: 2px;
+  margin: 2px 0 0;
 }
 
 .concert-meta {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #C5C6C7;
+  margin-top: 1px;
 }
 
 /* ===============================
    RESPONSIVE
-   =============================== */
-@media (max-width: 700px) {
-  .concerts-container form {
-    grid-template-columns: 1fr;
+================================ */
+@media (max-width: 1024px) {
+  form {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablet */
+  }
+}
+
+@media (max-width: 600px) {
+  form {
+    grid-template-columns: 1fr; /* 1 columna en móvil */
+  }
+  .form-field.full-width {
+    grid-column: span 1;
   }
 }
