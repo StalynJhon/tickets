@@ -478,81 +478,40 @@ const guardarConfiguracionNegocio = async (req, res) => {
 // Obtener información de la empresa (para clientes)
 const getInfoEmpresa = async (req, res) => {
   try {
-    // Intentar obtener de MongoDB primero
-    const [generalConfigMongo, legalConfigMongo] = await Promise.all([
-      SystemSettings.findOne({ type: 'general' }),
-      SystemSettings.findOne({ type: 'legal' })
-    ]);
+    // Leer directamente de MySQL
+    const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
     
-    let generalConfig = generalConfigMongo;
-    let legalConfig = legalConfigMongo;
-    
-    // Si no hay configuración en MongoDB, intentar obtener de MySQL
-    if (!generalConfig) {
-      try {
-        const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
-        if (configMysql) {
-          const data = configMysql.toJSON();
-          
-          // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/services/encrypDates');
-          
-          // Desencriptar datos de contacto de forma segura
-          let emailDesencriptado = descifrarSeguro(data.emailContacto);
-          let telefonoDesencriptado = descifrarSeguro(data.telefonoContacto);
-          let direccionDesencriptada = descifrarSeguro(data.direccionContacto);
-          
-          generalConfig = {
-            nombreComercial: data.nombreComercial,
-            logo: data.logo,
-            contactInfo: {
-              email: emailDesencriptado,
-              telefono: telefonoDesencriptado,
-              direccion: direccionDesencriptada
-            }
-          };
+    if (!configMysql) {
+      return res.status(200).json({
+        nombreComercial: '',
+        logo: '',
+        contacto: {
+          email: '',
+          telefono: '',
+          direccion: ''
         }
-      } catch (mysqlError) {
-        console.error('Error al leer configuración general de MySQL:', mysqlError);
-      }
+      });
     }
     
-    if (!legalConfig) {
-      try {
-        const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
-        if (configMysql) {
-          const data = configMysql.toJSON();
-          
-          // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/services/encrypDates');
-          
-          // Desencriptar textos legales de forma segura
-          let terminosDesencriptado = descifrarSeguro(data.terminos);
-          let politicaDesencriptada = descifrarSeguro(data.politica);
-          let mensajesCompraDesencriptado = descifrarSeguro(data.mensajesCompra);
-          
-          legalConfig = {
-            terms: terminosDesencriptado,
-            privacy: politicaDesencriptada,
-            purchaseMessages: mensajesCompraDesencriptado
-          };
-        }
-      } catch (mysqlError) {
-        console.error('Error al leer textos legales de MySQL:', mysqlError);
-      }
-    }
+    const data = configMysql.toJSON();
     
-    const response = {
-      nombreComercial: generalConfig?.nombreComercial || '',
-      logo: generalConfig?.logo || '',
-      contacto: generalConfig?.contactInfo || {
-        email: '',
-        telefono: '',
-        direccion: ''
-      }
-    };
+    // Importar funciones de desencriptación
+    const { descifrarDatos } = require('../../../application/services/encrypDates');
     
-    res.status(200).json(response);
+    // Desencriptar datos de contacto de forma segura
+    let emailDesencriptado = descifrarSeguro(data.emailContacto);
+    let telefonoDesencriptado = descifrarSeguro(data.telefonoContacto);
+    let direccionDesencriptada = descifrarSeguro(data.direccionContacto);
+    
+    res.status(200).json({
+      nombreComercial: data.nombreComercial || '',
+      logo: data.logo || '',
+      contacto: {
+        email: emailDesencriptado,
+        telefono: telefonoDesencriptado,
+        direccion: direccionDesencriptada
+      }
+    });
   } catch (error) {
     console.error('Error al obtener información de la empresa:', error);
     res.status(500).json({ error: 'Error al obtener la información de la empresa' });
@@ -562,40 +521,25 @@ const getInfoEmpresa = async (req, res) => {
 // Obtener términos y condiciones (para clientes)
 const getTerminosCondiciones = async (req, res) => {
   try {
-    // Intentar obtener de MongoDB primero
-    let configMongo = await SystemSettings.findOne({ type: 'legal' });
+    // Leer directamente de MySQL
+    const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
     
-    if (!configMongo) {
-      try {
-        // Si no existe en MongoDB, intentar obtener de MySQL
-        const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
-        if (configMysql) {
-          const data = configMysql.toJSON();
-          
-          // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/services/encrypDates');
-          
-          // Desencriptar términos y condiciones de forma segura
-          let terminosDesencriptado = descifrarSeguro(data.terminos);
-          
-          // Convertir el formato de MySQL al de MongoDB para compatibilidad
-          configMongo = {
-            terms: terminosDesencriptado
-          };
-        }
-      } catch (mysqlError) {
-        console.error('Error al leer términos y condiciones de MySQL:', mysqlError);
-      }
-    }
-    
-    if (!configMongo) {
+    if (!configMysql) {
       return res.status(200).json({
         texto: 'No hay términos y condiciones disponibles actualmente.'
       });
     }
     
+    const data = configMysql.toJSON();
+    
+    // Importar funciones de desencriptación
+    const { descifrarDatos } = require('../../../application/services/encrypDates');
+    
+    // Desencriptar términos y condiciones de forma segura
+    let terminosDesencriptado = descifrarSeguro(data.terminos);
+    
     res.status(200).json({
-      texto: configMongo.terms || 'No hay términos y condiciones disponibles actualmente.'
+      texto: terminosDesencriptado || 'No hay términos y condiciones disponibles actualmente.'
     });
   } catch (error) {
     console.error('Error al obtener términos y condiciones:', error);
@@ -606,40 +550,25 @@ const getTerminosCondiciones = async (req, res) => {
 // Obtener política de privacidad (para clientes)
 const getPoliticaPrivacidad = async (req, res) => {
   try {
-    // Intentar obtener de MongoDB primero
-    let configMongo = await SystemSettings.findOne({ type: 'legal' });
+    // Leer directamente de MySQL
+    const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
     
-    if (!configMongo) {
-      try {
-        // Si no existe en MongoDB, intentar obtener de MySQL
-        const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
-        if (configMysql) {
-          const data = configMysql.toJSON();
-          
-          // Importar funciones de desencriptación
-          const { descifrarDatos } = require('../../../application/services/encrypDates');
-          
-          // Desencriptar política de privacidad de forma segura
-          let politicaDesencriptada = descifrarSeguro(data.politica);
-          
-          // Convertir el formato de MySQL al de MongoDB para compatibilidad
-          configMongo = {
-            privacy: politicaDesencriptada
-          };
-        }
-      } catch (mysqlError) {
-        console.error('Error al leer política de privacidad de MySQL:', mysqlError);
-      }
-    }
-    
-    if (!configMongo) {
+    if (!configMysql) {
       return res.status(200).json({
         texto: 'No hay política de privacidad disponible actualmente.'
       });
     }
     
+    const data = configMysql.toJSON();
+    
+    // Importar funciones de desencriptación
+    const { descifrarDatos } = require('../../../application/services/encrypDates');
+    
+    // Desencriptar política de privacidad de forma segura
+    let politicaDesencriptada = descifrarSeguro(data.politica);
+    
     res.status(200).json({
-      texto: configMongo.privacy || 'No hay política de privacidad disponible actualmente.'
+      texto: politicaDesencriptada || 'No hay política de privacidad disponible actualmente.'
     });
   } catch (error) {
     console.error('Error al obtener política de privacidad:', error);
