@@ -34,26 +34,39 @@ const pool = mysql.createPool({
 router.get('/estadisticas', async (req, res) => {
   try {
     const [totalClientes] = await pool.query(
-      'SELECT COUNT(*) AS total FROM clientes'
+      `SELECT COUNT(*) AS total
+       FROM clientes
+       WHERE stadoCliente = 'activo'`
     );
 
     const [eventosActivos] = await pool.query(
-      "SELECT COUNT(*) AS total FROM events WHERE statusEvent='published'"
+      `SELECT COUNT(*) AS total
+       FROM events
+       WHERE stateEvent = 1
+       AND statusEvent = 'published'`
     );
 
     const [eventosHoy] = await pool.query(
-      "SELECT COUNT(*) AS total FROM events WHERE DATE(dateTimeEvent)=CURDATE()"
+      `SELECT COUNT(*) AS total
+       FROM events
+       WHERE stateEvent = 1
+       AND statusEvent = 'published'
+       AND DATE(dateTimeEvent) = CURDATE()`
     );
 
     const [eventosSemana] = await pool.query(
-      `SELECT COUNT(*) AS total 
-       FROM events 
-       WHERE DATE(dateTimeEvent) 
+      `SELECT COUNT(*) AS total
+       FROM events
+       WHERE stateEvent = 1
+       AND statusEvent = 'published'
+       AND DATE(dateTimeEvent)
        BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)`
     );
 
     const [productosActivos] = await pool.query(
-      "SELECT COUNT(*) AS total FROM products WHERE stateProduct=1"
+      `SELECT COUNT(*) AS total
+       FROM products
+       WHERE stateProduct = 1`
     );
 
     res.json({
@@ -75,13 +88,15 @@ router.get('/estadisticas', async (req, res) => {
 router.get('/eventos/proximos', async (req, res) => {
   try {
     const [eventos] = await pool.query(
-      `SELECT 
-        idEvent AS id, 
-        nameEvent AS nombre, 
-        dateTimeEvent AS fecha 
-       FROM events 
-       WHERE DATE(dateTimeEvent) >= CURDATE() 
-       ORDER BY dateTimeEvent ASC 
+      `SELECT
+        idEvent AS id,
+        nameEvent AS nombre,
+        dateTimeEvent AS fecha
+       FROM events
+       WHERE stateEvent = 1
+       AND statusEvent = 'published'
+       AND DATE(dateTimeEvent) >= CURDATE()
+       ORDER BY dateTimeEvent ASC
        LIMIT 10`
     );
 
@@ -104,13 +119,14 @@ router.get('/eventos/proximos', async (req, res) => {
 router.get('/clientes/recientes', async (req, res) => {
   try {
     const [clientes] = await pool.query(
-      `SELECT 
-        idClientes AS id, 
-        nombreCliente AS nombre, 
-        usernameCliente AS email, 
-        createCliente AS fecha_creacion 
-       FROM clientes 
-       ORDER BY createCliente DESC 
+      `SELECT
+        idClientes AS id,
+        nombreCliente AS nombre,
+        usernameCliente AS email,
+        createCliente AS fecha_creacion
+       FROM clientes
+       WHERE stadoCliente = 'activo'
+       ORDER BY createCliente DESC
        LIMIT 10`
     );
 
@@ -134,12 +150,14 @@ router.get('/clientes/recientes', async (req, res) => {
 router.get('/eventos/top-ventas', async (req, res) => {
   try {
     const [eventos] = await pool.query(
-      `SELECT 
-        e.idEvent AS id, 
-        e.nameEvent AS nombre, 
+      `SELECT
+        e.idEvent AS id,
+        e.nameEvent AS nombre,
         SUM(t.cantidad) AS totalVentas
        FROM events e
        JOIN transactions t ON t.evento_id = e.idEvent
+       WHERE e.stateEvent = 1
+       AND e.statusEvent = 'published'
        GROUP BY e.idEvent, e.nameEvent
        ORDER BY totalVentas DESC
        LIMIT 5`
