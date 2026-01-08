@@ -269,7 +269,7 @@ app.use('/staff', require('../src/infrastructure/http/router/staff.router'));
 app.use('/promotions', require('../src/infrastructure/http/router/promotions.router'));
 app.use('/configuracion', require('../src/infrastructure/http/router/configuracion.router'));
 app.use('/admin/dashboard', require('../src/infrastructure/http/router/dashboard.router'));
-
+app.use('/admin/configuracion', require('../src/infrastructure/http/router/configuracion.router'));
 
 app.use(require('../src/infrastructure/http/router/index'))
 
