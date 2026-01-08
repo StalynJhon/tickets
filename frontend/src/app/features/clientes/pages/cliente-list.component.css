@@ -527,3 +527,235 @@
   outline: none;
   border-color: #3b82f6;
 }
+
+/* =====================================================
+   TEMA OSCURO PROFESIONAL (SOLO COLORES - OVERRIDES)
+   ===================================================== */
+
+/* HERO */
+.hero-header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.hero-header::before {
+  background: linear-gradient(
+    45deg,
+    rgba(45, 212, 191, 0.15),
+    transparent 60%
+  );
+}
+
+.hero-header::before {
+  background: linear-gradient(
+    45deg,
+    rgba(45, 212, 191, 0.15),
+    transparent 60%
+  );
+}
+
+
+
+.hero-header .subtitle {
+  color: #94a3b8;
+}
+
+/* SEARCH */
+.search-input {
+  background: #020617;
+  color: #e5e7eb;
+  border-color: #334155;
+}
+
+.search-input::placeholder {
+  color: #64748b;
+}
+
+.search-input:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+/* BOTONES FILTRO */
+.filtro-btn {
+  background: #020617;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.filtro-btn:hover {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.filtro-btn.active {
+  background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+  border-color: #2dd4bf;
+  color: #020617;
+}
+
+/* FORM */
+.config-form {
+  background: #0f172a;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* CARDS */
+.config-card {
+  background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  border-color: #334155;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+.config-card h3 {
+  color: #e5e7eb;
+}
+
+.config-card p {
+  color: #94a3b8;
+}
+
+.config-card p strong {
+  color: #cbd5f5;
+}
+
+/* MENU 3 PUNTOS */
+.menu-btn {
+  background: #020617;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.menu {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.menu button {
+  color: #e5e7eb;
+}
+
+.menu button:hover {
+  background: #020617;
+}
+
+/* ESTADOS */
+.estado.activo {
+  background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+  color: #020617;
+}
+
+.estado.inactivo {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+/* MODAL */
+.modal {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.modal h2 {
+  color: #2dd4bf;
+}
+
+/* INPUTS */
+.modal form input,
+.form-control,
+.select-estado,
+.estado-select {
+  background: #020617;
+  color: #e5e7eb;
+  border-color: #334155;
+}
+
+.modal form input:focus,
+.form-control:focus,
+.select-estado:focus,
+.estado-select:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+/* BOTONES */
+.btn-primary {
+  background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+  color: #020617;
+  box-shadow: 0 10px 30px rgba(45, 212, 191, 0.4);
+}
+
+.btn-cancelar {
+  background: #334155;
+}
+
+/* BOTONES INLINE */
+.btn-edit {
+  background: rgba(45, 212, 191, 0.15);
+  color: #5eead4;
+}
+
+.btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+/* =========================
+   FIX VISIBILIDAD TEXTO FORMULARIO (DARK)
+   ========================= */
+
+/* Texto escrito */
+.modal form input,
+.modal form input[type="text"],
+.modal form input[type="email"],
+.modal form input[type="password"],
+.modal form input[type="tel"],
+.form-control {
+  color: #e5e7eb !important;
+  caret-color: #2dd4bf;
+}
+
+/* Placeholder */
+.modal form input::placeholder,
+.form-control::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+/* Focus */
+.modal form input:focus,
+.form-control:focus {
+  color: #e5e7eb !important;
+  background: #020617;
+}
+
+/* Autofill Chrome */
+.modal form input:-webkit-autofill,
+.modal form input:-webkit-autofill:hover,
+.modal form input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e5e7eb !important;
+  box-shadow: 0 0 0px 1000px #020617 inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Select */
+.select-estado {
+  color: #e5e7eb !important;
+}
+
+.select-estado option {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+/* =========================
+   COLOR TITULO HERO
+   ========================= */
+.hero-header h1 {
+  color: #2dd4bf !important; /* turquesa */
+  background: none !important;
+}
+
+/* Subtítulo */
+.hero-header .subtitle {
+  color: #94a3b8 !important; /* gris suave */
+}
