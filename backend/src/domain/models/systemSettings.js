@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const systemSettingsSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['theme', 'typography', 'general', 'business', 'payment', 'legal'],
+        enum: ['theme', 'typography', 'general', 'business', 'payment', 'legal', 'faq'],
         required: true
     },
     colors: {
@@ -66,6 +66,13 @@ const systemSettingsSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: true
+    },
+    faqs: {
+        type: [{
+            pregunta: String,
+            respuesta: String
+        }],
+        default: []
     }
 }, {
     timestamps: true,

@@ -16,6 +16,7 @@
         <button class="filtro-btn" [class.active]="filtroActual === 'plataforma'" (click)="aplicarFiltro('plataforma')">Plataforma</button>
         <button class="filtro-btn" [class.active]="filtroActual === 'negocio'" (click)="aplicarFiltro('negocio')">Negocio</button>
         <button class="filtro-btn" [class.active]="filtroActual === 'legales'" (click)="aplicarFiltro('legales')">Legal</button>
+        <button class="filtro-btn" [class.active]="filtroActual === 'faq'" (click)="aplicarFiltro('faq')">FAQ</button>
       </div>
     </div>
   </div>
@@ -182,6 +183,66 @@
               rows="4"
               placeholder="Mensajes informativos que se mostrarán durante la compra"></textarea>
             <span class="input-helper">Mensajes que aparecerán durante el proceso de compra</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= FAQ ================= -->
+    <div class="config-card" *ngIf="mostrarSeccion('faq')">
+      <div class="card-header" (click)="toggleSection('faq')">
+        <h3><i class="icon-help"></i> Preguntas Frecuentes (FAQ)</h3>
+        <div class="card-toggle">
+          <i [class]="getSectionIcon('faq')"></i>
+        </div>
+      </div>
+
+      <div class="card-content" [class.expanded]="isSectionExpanded('faq')">
+        <div class="faq-section">
+          <div class="faq-controls">
+            <button type="button" class="btn btn-secondary" (click)="agregarFAQ()">
+              <i class="icon-plus"></i> Agregar Pregunta
+            </button>
+          </div>
+
+          <div class="faq-list" *ngIf="configData.faqs && configData.faqs.length > 0">
+            <div class="faq-item" *ngFor="let faq of configData.faqs; let i = index">
+              <div class="faq-header">
+                <input 
+                  type="text" 
+                  class="faq-question-input"
+                  [(ngModel)]="faq.pregunta" 
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Pregunta">
+                <div class="faq-actions">
+                  <button type="button" class="btn-icon move-up" (click)="moverFAQArriba(i)" [disabled]="i === 0">
+                    <i class="icon-arrow-up"></i>
+                  </button>
+                  <button type="button" class="btn-icon move-down" (click)="moverFAQAbajo(i)" [disabled]="i === configData.faqs.length - 1">
+                    <i class="icon-arrow-down"></i>
+                  </button>
+                  <button type="button" class="btn-icon delete" (click)="eliminarFAQ(i)">
+                    <i class="icon-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="faq-body">
+                <textarea 
+                  class="faq-answer-textarea"
+                  [(ngModel)]="faq.respuesta" 
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Respuesta" 
+                  rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="!configData.faqs || configData.faqs.length === 0">
+            <i class="icon-help-circle"></i>
+            <p>No hay preguntas frecuentes aún</p>
+            <button type="button" class="btn btn-secondary" (click)="agregarFAQ()">
+              <i class="icon-plus"></i> Agregar la primera pregunta
+            </button>
           </div>
         </div>
       </div>

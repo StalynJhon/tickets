@@ -579,27 +579,95 @@ const getPoliticaPrivacidad = async (req, res) => {
 // Obtener ayuda/FAQ (para clientes)
 const getAyudaFAQ = async (req, res) => {
   try {
-    // Por ahora, devolver una respuesta estándar
-    // En el futuro, esto podría venir de una base de datos
-    res.status(200).json({
-      faqs: [
-        {
-          pregunta: '¿Cómo compro entradas?',
-          respuesta: 'Puedes navegar por nuestros eventos disponibles, seleccionar el evento que te interesa, elegir la cantidad de entradas y completar el proceso de pago.'
-        },
-        {
-          pregunta: '¿Puedo devolver mis entradas?',
-          respuesta: 'Las políticas de devolución dependen de cada evento. Por favor revisa los términos específicos del evento antes de realizar tu compra.'
-        },
-        {
-          pregunta: '¿Cómo puedo contactar al soporte?',
-          respuesta: 'Puedes contactarnos a través de nuestro formulario de contacto o enviar un correo electrónico a soporte@ejemplo.com.'
+    // Intentar obtener de MongoDB primero
+    let configMongo = await SystemSettings.findOne({ type: 'faq' });
+    
+    if (!configMongo) {
+      try {
+        // Si no existe en MongoDB, intentar obtener de MySQL
+        const configMysql = await Configuracion.findOne({ where: { tipo: 'general' } });
+        if (configMysql && configMysql.faqs) {
+          // Convertir el formato de MySQL al de MongoDB para compatibilidad
+          configMongo = {
+            faqs: configMysql.faqs
+          };
         }
-      ]
+      } catch (mysqlError) {
+        console.error('Error al leer FAQs de MySQL:', mysqlError);
+      }
+    }
+    
+    if (!configMongo || !configMongo.faqs || configMongo.faqs.length === 0) {
+      // Devolver FAQs por defecto si no hay configuración
+      return res.status(200).json({
+        faqs: [
+          {
+            pregunta: '¿Cómo compro entradas?',
+            respuesta: 'Puedes navegar por nuestros eventos disponibles, seleccionar el evento que te interesa, elegir la cantidad de entradas y completar el proceso de pago.'
+          },
+          {
+            pregunta: '¿Puedo devolver mis entradas?',
+            respuesta: 'Las políticas de devolución dependen de cada evento. Por favor revisa los términos específicos del evento antes de realizar tu compra.'
+          },
+          {
+            pregunta: '¿Cómo puedo contactar al soporte?',
+            respuesta: 'Puedes contactarnos a través de nuestro formulario de contacto o enviar un correo electrónico a soporte@ejemplo.com.'
+          }
+        ]
+      });
+    }
+    
+    res.status(200).json({
+      faqs: configMongo.faqs || []
     });
   } catch (error) {
     console.error('Error al obtener ayuda/FAQ:', error);
     res.status(500).json({ error: 'Error al obtener la ayuda y preguntas frecuentes' });
+  }
+};
+
+// Guardar ayuda/FAQ
+const guardarAyudaFAQ = async (req, res) => {
+  try {
+    let config = await SystemSettings.findOne({ type: 'faq' });
+    
+    const { faqs } = req.body;
+    
+    // Validar que se proporcionen FAQs
+    if (!faqs || !Array.isArray(faqs)) {
+      return res.status(400).json({ error: 'Debe proporcionar un arreglo de FAQs válido' });
+    }
+    
+    if (config) {
+      // Actualizar configuración existente en MongoDB
+      config.faqs = faqs;
+      await config.save();
+    } else {
+      // Crear nueva configuración en MongoDB
+      config = new SystemSettings({
+        type: 'faq',
+        faqs: faqs
+      });
+      await config.save();
+    }
+    
+    // Guardar también en MySQL
+    try {
+      // Asegurar que solo exista un registro tipo 'general'
+      await ensureSingleGeneralConfig();
+      
+      await Configuracion.update(
+        { faqs: faqs },
+        { where: { tipo: 'general' } }
+      );
+    } catch (mysqlError) {
+      console.error('Error al guardar FAQs en MySQL:', mysqlError);
+    }
+    
+    res.status(200).json({ message: 'FAQs guardadas correctamente' });
+  } catch (error) {
+    console.error('Error al guardar ayuda/FAQ:', error);
+    res.status(500).json({ error: 'Error al guardar las preguntas frecuentes' });
   }
 };
 
@@ -613,5 +681,6 @@ module.exports = {
   getInfoEmpresa,
   getTerminosCondiciones,
   getPoliticaPrivacidad,
-  getAyudaFAQ
+  getAyudaFAQ,
+  guardarAyudaFAQ
 };

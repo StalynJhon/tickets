@@ -60,4 +60,9 @@ export class ConfiguracionService {
   getAyudaFAQ() {
     return this.http.get<any>(`${this.apiUrl}/ayuda`);
   }
+
+  // 🔹 Guardar ayuda/FAQ
+  guardarAyudaFAQ(data: any) {
+    return this.http.post(`${this.apiUrl}/faq`, data);
+  }
 }

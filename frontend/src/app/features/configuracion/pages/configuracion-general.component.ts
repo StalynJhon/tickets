@@ -40,16 +40,17 @@ export class ConfiguracionGeneralComponent implements OnInit {
       terminos: '',
       politica: '',
       mensajesCompra: ''
-    }
+    },
+    faqs: []
   };
 
   // Estados para secciones colapsables
-  private expandedSections: Set<string> = new Set(['plataforma', 'legales', 'negocio']);
+  private expandedSections: Set<string> = new Set(['plataforma', 'legales', 'faq', 'negocio']);
   
   // Estados para búsqueda y filtrado
   filtroActual: string = 'todas';
   terminoBusqueda: string = '';
-  seccionesFiltradas: string[] = ['plataforma', 'legales', 'negocio'];
+  seccionesFiltradas: string[] = ['plataforma', 'legales', 'faq', 'negocio'];
 
   constructor(private configuracionService: ConfiguracionService) {}
 
@@ -96,6 +97,18 @@ export class ConfiguracionGeneralComponent implements OnInit {
         console.error('Error al cargar textos legales:', err);
       }
     });
+
+    // Cargar FAQs
+    this.configuracionService.getAyudaFAQ().subscribe({
+      next: (data: any) => {
+        if (data && data.faqs) {
+          this.configData.faqs = [...data.faqs];
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al cargar FAQs:', err);
+      }
+    });
   }
 
   guardarConfiguracion() {
@@ -131,14 +144,56 @@ export class ConfiguracionGeneralComponent implements OnInit {
     });
 
     // Guardar textos legales
-    this.configuracionService.guardarTextosLegales(this.configData.textosLegales).subscribe({
+    console.log('Datos a enviar para textos legales:', this.configData.textosLegales);
+    
+    // Solo guardar si al menos un campo tiene contenido
+    const textosLegales = this.configData.textosLegales;
+    if (textosLegales.terminos || textosLegales.politica || textosLegales.mensajesCompra) {
+      this.configuracionService.guardarTextosLegales(textosLegales).subscribe({
+        next: () => {
+          console.log('Textos legales guardados correctamente');
+        },
+        error: (err) => {
+          console.error('Error al guardar textos legales:', err);
+          Swal.fire('Error', 'No se pudieron guardar los textos legales', 'error');
+          return;
+        }
+      });
+    } else {
+      console.log('No hay textos legales para guardar');
+    }
+
+    // Guardar FAQs
+    // Garantizar que siempre tengamos un array válido
+    let faqsParaEnviar = [];
+    
+    if (this.configData.faqs === null || this.configData.faqs === undefined) {
+      faqsParaEnviar = [];
+    } else if (Array.isArray(this.configData.faqs)) {
+      // Filtrar FAQs con contenido real
+      faqsParaEnviar = this.configData.faqs.filter((faq: any) => {
+        try {
+          const pregunta = faq?.pregunta || '';
+          const respuesta = faq?.respuesta || '';
+          const preguntaTrim = typeof pregunta === 'string' ? pregunta.trim() : '';
+          const respuestaTrim = typeof respuesta === 'string' ? respuesta.trim() : '';
+          
+          return preguntaTrim.length > 0 || respuestaTrim.length > 0;
+        } catch (error) {
+          return false;
+        }
+      });
+    } else {
+      faqsParaEnviar = [];
+    }
+    
+    // ENVIAR SIEMPRE UN ARRAY VÁLIDO AL BACKEND
+    this.configuracionService.guardarAyudaFAQ({ faqs: faqsParaEnviar }).subscribe({
       next: () => {
-        console.log('Textos legales guardados correctamente');
         Swal.fire('Guardado', 'La configuración se ha guardado correctamente', 'success');
       },
-      error: (err) => {
-        console.error('Error al guardar textos legales:', err);
-        Swal.fire('Error', 'No se pudieron guardar los textos legales', 'error');
+      error: (err: any) => {
+        Swal.fire('Error', 'No se pudieron guardar las preguntas frecuentes', 'error');
       }
     });
   }
@@ -168,7 +223,7 @@ export class ConfiguracionGeneralComponent implements OnInit {
 
   filtrarSecciones(): void {
     if (this.filtroActual === 'todas') {
-      this.seccionesFiltradas = ['plataforma', 'legales', 'negocio'];
+      this.seccionesFiltradas = ['plataforma', 'legales', 'faq', 'negocio'];
     } else {
       this.seccionesFiltradas = [this.filtroActual];
     }
@@ -181,7 +236,7 @@ export class ConfiguracionGeneralComponent implements OnInit {
     }
 
     // Filtrar secciones según el término de búsqueda
-    const secciones = ['plataforma', 'legales', 'negocio'];
+    const secciones = ['plataforma', 'legales', 'faq', 'negocio'];
     this.seccionesFiltradas = secciones.filter(seccion => {
       const titulo = this.getTituloSeccion(seccion).toLowerCase();
       return titulo.includes(this.terminoBusqueda.toLowerCase());
@@ -196,8 +251,43 @@ export class ConfiguracionGeneralComponent implements OnInit {
         return 'Textos Legales';
       case 'negocio':
         return 'Configuración de Negocio';
+      case 'faq':
+        return 'Preguntas Frecuentes';
       default:
         return seccion;
+    }
+  }
+
+  // Métodos para manejo de FAQs
+  agregarFAQ(): void {
+    if (!this.configData.faqs) {
+      this.configData.faqs = [];
+    }
+    this.configData.faqs.push({
+      pregunta: '',
+      respuesta: ''
+    });
+  }
+
+  eliminarFAQ(index: number): void {
+    if (this.configData.faqs && index >= 0 && index < this.configData.faqs.length) {
+      this.configData.faqs.splice(index, 1);
+    }
+  }
+
+  moverFAQArriba(index: number): void {
+    if (this.configData.faqs && index > 0 && index < this.configData.faqs.length) {
+      const temp = this.configData.faqs[index];
+      this.configData.faqs[index] = this.configData.faqs[index - 1];
+      this.configData.faqs[index - 1] = temp;
+    }
+  }
+
+  moverFAQAbajo(index: number): void {
+    if (this.configData.faqs && index >= 0 && index < this.configData.faqs.length - 1) {
+      const temp = this.configData.faqs[index];
+      this.configData.faqs[index] = this.configData.faqs[index + 1];
+      this.configData.faqs[index + 1] = temp;
     }
   }
 

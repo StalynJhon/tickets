@@ -77,6 +77,11 @@ const Configuracion = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true
+    },
+    faqs: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: []
     }
   }, {
     tableName: 'configuracion',

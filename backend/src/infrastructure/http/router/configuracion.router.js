@@ -10,7 +10,8 @@ const {
   getInfoEmpresa,
   getTerminosCondiciones,
   getPoliticaPrivacidad,
-  getAyudaFAQ
+  getAyudaFAQ,
+  guardarAyudaFAQ
 } = require('../controllers/configuracion.controller');
 
 // Importar middleware de autenticación
@@ -23,6 +24,8 @@ router.get('/legal', getTextosLegales);
 router.post('/legal', guardarTextosLegales);
 router.get('/negocio', getConfiguracionNegocio);
 router.post('/negocio', guardarConfiguracionNegocio);
+router.get('/faq', getAyudaFAQ);
+router.post('/faq', guardarAyudaFAQ);
 
 // Rutas para clientes
 router.get('/empresa', getInfoEmpresa);
