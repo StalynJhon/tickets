@@ -1,33 +1,61 @@
 <div class="dashboard-container">
-  <h1 class="dashboard-title">Panel de Control - Tickets Master</h1>
 
-  <div class="dashboard-grid">
+  <!-- TÍTULO -->
+  <h1 class="dashboard-title">Panel de Administración</h1>
 
-    <div class="dashboard-card">
+  <!-- ESTADÍSTICAS -->
+  <div class="stats-grid">
+    <div class="stat-card">
       <h3>Clientes</h3>
-      <a routerLink="/clientes" class="dashboard-link">Gestionar clientes</a>
+      <p>{{ stats?.totalClientes }}</p>
     </div>
 
-    <div class="dashboard-card">
-      <h3>Eventos</h3>
-      <a routerLink="/eventos" class="dashboard-link">Gestionar eventos</a>
+    <div class="stat-card">
+      <h3>Eventos Activos</h3>
+      <p>{{ stats?.eventosActivos }}</p>
     </div>
 
-    <div class="dashboard-card">
-      <h3>Categorías</h3>
-      <a routerLink="/categorias" class="dashboard-link">Gestionar categorías</a>
+    <div class="stat-card">
+      <h3>Eventos Hoy</h3>
+      <p>{{ stats?.eventosHoy }}</p>
     </div>
 
-    <div class="dashboard-card">
-      <h3>Productos</h3>
-      <a routerLink="/products" class="dashboard-link">Gestionar productos</a>
+    <div class="stat-card">
+      <h3>Productos Activos</h3>
+      <p>{{ stats?.productosActivos }}</p>
     </div>
-
-    <div class="dashboard-card">
-      <h3>Transporte</h3>
-      <a routerLink="/transport" class="dashboard-link">Gestionar transporte</a>
-    </div>
-
   </div>
-  
+
+  <!-- PRÓXIMOS EVENTOS -->
+  <section class="panel">
+    <h2>📅 Próximos Eventos</h2>
+
+    <ul *ngIf="eventos.length; else noEventos">
+      <li *ngFor="let e of eventos">
+        <strong>{{ e.nombre }}</strong>
+        <span>{{ e.fecha | date:'dd/MM/yyyy' }}</span>
+      </li>
+    </ul>
+
+    <ng-template #noEventos>
+      <p class="empty">No hay eventos próximos</p>
+    </ng-template>
+  </section>
+
+  <!-- CLIENTES RECIENTES -->
+  <section class="panel">
+    <h2>👤 Clientes Recientes</h2>
+
+    <ul *ngIf="clientes.length; else noClientes">
+      <li *ngFor="let c of clientes">
+        <strong>{{ c.nombre }}</strong>
+        <span>{{ c.email }}</span>
+      </li>
+    </ul>
+
+    <ng-template #noClientes>
+      <p class="empty">No hay clientes recientes</p>
+    </ng-template>
+  </section>
+
 </div>
