@@ -1,0 +1,86 @@
+<div class="concerts-container">
+
+  <h2>Crear Concierto</h2>
+
+  <form (ngSubmit)="crearConcierto()">
+
+    <!-- Nombre concierto -->
+    <div class="form-field full-width">
+      <label>Nombre del concierto *</label>
+      <input type="text" name="nameConcert" [(ngModel)]="nuevoConcierto.nameConcert" />
+    </div>
+
+    <!-- Tour -->
+    <div class="form-field">
+      <label>Tour</label>
+      <input type="text" name="tourName" [(ngModel)]="nuevoConcierto.tourName" />
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-field full-width">
+      <label>Descripción</label>
+      <textarea name="descriptionConcert" [(ngModel)]="nuevoConcierto.descriptionConcert" rows="3"></textarea>
+    </div>
+
+    <!-- Fecha -->
+    <div class="form-field">
+      <label>Fecha *</label>
+      <input type="date" name="dateConcert" [(ngModel)]="nuevoConcierto.dateConcert" />
+    </div>
+
+    <!-- Hora inicio -->
+    <div class="form-field">
+      <label>Hora inicio *</label>
+      <input type="time" name="startTime" [(ngModel)]="nuevoConcierto.startTime" />
+    </div>
+
+    <!-- Hora fin -->
+    <div class="form-field">
+      <label>Hora fin</label>
+      <input type="time" name="endTime" [(ngModel)]="nuevoConcierto.endTime" />
+    </div>
+
+    <!-- Precio general -->
+    <div class="form-field">
+      <label>Precio general *</label>
+      <input type="number" name="ticketPrice" [(ngModel)]="nuevoConcierto.ticketPrice" />
+    </div>
+
+    <!-- Precio VIP -->
+    <div class="form-field">
+      <label>Precio VIP</label>
+      <input type="number" name="vipPrice" [(ngModel)]="nuevoConcierto.vipPrice" />
+    </div>
+
+    <!-- Duración -->
+    <div class="form-field full-width">
+      <label>Duración (minutos)</label>
+      <input type="number" name="durationMinutes" [(ngModel)]="nuevoConcierto.durationMinutes" />
+    </div>
+
+    <!-- Botón -->
+    <div class="form-field full-width">
+      <button type="submit" [disabled]="cargando">
+        {{ cargando ? 'Creando...' : 'Crear concierto' }}
+      </button>
+    </div>
+
+  </form>
+
+  <!-- Mensajes -->
+  <p style="color: red" *ngIf="error">{{ error }}</p>
+  <p style="color: green" *ngIf="success">{{ success }}</p>
+
+  <hr />
+
+  <h2>Conciertos creados</h2>
+
+  <ul>
+    <li *ngFor="let concierto of conciertos" class="concert-card">
+      <h3>{{ concierto.nameConcert }}</h3>
+      <p class="tour-name" *ngIf="concierto.tourName">🌍 {{ concierto.tourName }}</p>
+      <p class="concert-meta">📅 {{ concierto.dateConcert }} | ⏰ {{ concierto.startTime }}</p>
+    </li>
+  </ul>
+
+</div>

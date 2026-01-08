@@ -12,6 +12,9 @@ import { ConfiguracionGeneralComponent } from '../features/configuracion/pages/c
 /* Categorías */
 import { CategoriaComponent } from '../features/categoria/pages/categoria.component';
 
+/* Conciertos */
+import { ConciertosComponent } from '../features/conciertos/pages/conciertos.component';
+
 /* Products */
 import { ProductsListComponent } from '../features/products/pages/products-list.component';
 
@@ -39,6 +42,9 @@ export const routes: Routes = [
 
   // Categorías
   { path: 'categorias', component: CategoriaComponent },
+
+  // Conciertos
+  { path: 'conciertos', component: ConciertosComponent },
 
   // Products
   { path: 'products', component: ProductsListComponent },

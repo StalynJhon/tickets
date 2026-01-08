@@ -51,7 +51,7 @@ concertCtl.mostrarArtistas = async (req, res) => {
 // Crear nuevo artista
 concertCtl.crearArtista = async (req, res) => {
     try {
-        const { 
+        const {
             nameArtist, genreArtist, countryOrigin, biography,
             socialMediaLinks, contactInfo, statusArtist
         } = req.body;
@@ -74,16 +74,16 @@ concertCtl.crearArtista = async (req, res) => {
             createArtist: new Date().toLocaleString(),
         });
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             message: 'Artista creado exitosamente',
             idArtist: nuevoArtista.idArtist
         });
 
     } catch (error) {
         console.error('Error al crear artista:', error);
-        return res.status(500).json({ 
-            message: 'Error al crear el artista', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Error al crear el artista',
+            error: error.message
         });
     }
 };
@@ -124,7 +124,7 @@ concertCtl.mostrarVenues = async (req, res) => {
 // Crear nuevo venue
 concertCtl.crearVenue = async (req, res) => {
     try {
-        const { 
+        const {
             nameVenue, addressVenue, capacity, venueType,
             soundSystem, lightingSystem, stageSize, parkingSpaces,
             accessibilityFeatures, contactInfo
@@ -151,16 +151,16 @@ concertCtl.crearVenue = async (req, res) => {
             createVenue: new Date().toLocaleString(),
         });
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             message: 'Venue creado exitosamente',
             idVenue: nuevoVenue.idConcertVenue
         });
 
     } catch (error) {
         console.error('Error al crear venue:', error);
-        return res.status(500).json({ 
-            message: 'Error al crear el venue', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Error al crear el venue',
+            error: error.message
         });
     }
 };
@@ -202,7 +202,7 @@ concertCtl.obtenerSeccionesVenue = async (req, res) => {
 concertCtl.crearSeccion = async (req, res) => {
     try {
         const { venueId } = req.params;
-        const { 
+        const {
             sectionName, capacity, basePrice, sectionType,
             viewQuality, amenities
         } = req.body;
@@ -235,16 +235,16 @@ concertCtl.crearSeccion = async (req, res) => {
             createConcertSection: new Date().toLocaleString(),
         });
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             message: 'Sección creada exitosamente',
             idSection: nuevaSeccion.idConcertSection
         });
 
     } catch (error) {
         console.error('Error al crear sección:', error);
-        return res.status(500).json({ 
-            message: 'Error al crear la sección', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Error al crear la sección',
+            error: error.message
         });
     }
 };
@@ -255,17 +255,18 @@ concertCtl.crearSeccion = async (req, res) => {
 concertCtl.mostrarConciertos = async (req, res) => {
     try {
         const [conciertos] = await sql.promise().query(`
-            SELECT c.*, a.nameArtist, v.nameVenue, v.addressVenue,
-                   COUNT(DISTINCT cr.idConcertReservation) as reservasTotales,
-                   SUM(cr.pricePaid) as ingresoTotal
-            FROM concerts c
-            JOIN artists a ON c.artistId = a.idArtist
-            JOIN concertVenues v ON c.venueId = v.idConcertVenue
-            LEFT JOIN concertReservations cr ON c.idConcert = cr.concertId
-            WHERE c.stateConcert = 1
-            GROUP BY c.idConcert
-            ORDER BY c.dateConcert DESC
-        `);
+  SELECT c.*, a.nameArtist, v.nameVenue, v.addressVenue,
+         COUNT(DISTINCT cr.idConcertReservation) as reservasTotales,
+         SUM(cr.pricePaid) as ingresoTotal
+  FROM concerts c
+  LEFT JOIN artists a ON c.artistId = a.idArtist
+  LEFT JOIN concertVenues v ON c.venueId = v.idConcertVenue
+  LEFT JOIN concertReservations cr ON c.idConcert = cr.concertId
+  WHERE c.stateConcert = 1
+  GROUP BY c.idConcert
+  ORDER BY c.dateConcert DESC
+`);
+
 
         const conciertosCompletos = await Promise.all(
             conciertos.map(async (concierto) => {
@@ -303,83 +304,111 @@ concertCtl.mostrarConciertos = async (req, res) => {
 // Crear nuevo concierto
 concertCtl.crearConcierto = async (req, res) => {
     try {
-        const { 
-            nameConcert, tourName, descriptionConcert, artistId, venueId,
-            dateConcert, startTime, endTime, ageRestriction, durationMinutes,
-            ticketPrice, vipPrice, statusConcert,
-            // Metadata adicional
-            setlist, bandMembers, merchandising
+        const {
+            nameConcert,
+            tourName,
+            descriptionConcert,
+            artistId,
+            artistNameTemp,
+            venueId,
+            venueNameTemp,
+            dateConcert,
+            startTime,
+            endTime,
+            ageRestriction,
+            durationMinutes,
+            ticketPrice,
+            vipPrice,
+            statusConcert,
+            setlist,
+            bandMembers,
+            merchandising
         } = req.body;
 
-        // Validaciones
-        if (!nameConcert || !artistId || !venueId || !dateConcert || !startTime || !ticketPrice) {
-            return res.status(400).json({ message: 'Nombre, artista, venue, fecha, hora y precio son obligatorios' });
+        // ✅ Validación mínima
+        if (!nameConcert || !dateConcert || !startTime || !ticketPrice) {
+            return res.status(400).json({
+                message: 'Nombre, fecha, hora y precio son obligatorios'
+            });
         }
 
-        // Verificar que el artista y venue existen
-        const [artistaExiste] = await sql.promise().query(
-            'SELECT idArtist FROM artists WHERE idArtist = ? AND stateArtist = 1',
-            [artistId]
-        );
+        // ================= ARTISTA (HÍBRIDO) =================
+        let artistIdFinal = null;
 
-        const [venueExiste] = await sql.promise().query(
-            'SELECT idConcertVenue FROM concertVenues WHERE idConcertVenue = ? AND stateVenue = 1',
-            [venueId]
-        );
+        if (artistId) {
+            const [artistaExiste] = await sql.promise().query(
+                'SELECT idArtist FROM artists WHERE idArtist = ? AND stateArtist = 1',
+                [artistId]
+            );
 
-        if (artistaExiste.length === 0) {
-            return res.status(404).json({ message: 'Artista no encontrado' });
+            if (artistaExiste.length === 0) {
+                return res.status(404).json({ message: 'Artista no encontrado' });
+            }
+
+            artistIdFinal = parseInt(artistId);
         }
 
-        if (venueExiste.length === 0) {
-            return res.status(404).json({ message: 'Venue no encontrado' });
+        // ================= VENUE (HÍBRIDO) =================
+        let venueIdFinal = null;
+
+        if (venueId) {
+            const [venueExiste] = await sql.promise().query(
+                'SELECT idConcertVenue FROM concertVenues WHERE idConcertVenue = ? AND stateVenue = 1',
+                [venueId]
+            );
+
+            if (venueExiste.length === 0) {
+                return res.status(404).json({ message: 'Venue no encontrado' });
+            }
+
+            venueIdFinal = parseInt(venueId);
         }
 
-        // Crear concierto
+        // ================= CREAR CONCIERTO =================
         const nuevoConcierto = await orm.Concert.create({
             nameConcert: cifrarDatos(nameConcert),
             tourName: cifrarDatos(tourName || ''),
             descriptionConcert: cifrarDatos(descriptionConcert || ''),
-            artistId: parseInt(artistId),
-            venueId: parseInt(venueId),
+            artistId: artistIdFinal,
+            venueId: venueIdFinal,
             dateConcert: new Date(dateConcert),
-            startTime: startTime,
-            endTime: endTime,
+            startTime,
+            endTime,
             ageRestriction: parseInt(ageRestriction) || 0,
             durationMinutes: parseInt(durationMinutes) || 120,
             ticketPrice: parseFloat(ticketPrice),
             vipPrice: parseFloat(vipPrice) || parseFloat(ticketPrice) * 2,
             statusConcert: statusConcert || 'scheduled',
             stateConcert: true,
-            createConcert: new Date().toLocaleString(),
+            createConcert: new Date().toLocaleString()
         });
 
-        // Crear metadata en MongoDB
+        // ================= METADATA (OPCIONAL) =================
         if (setlist || bandMembers || merchandising) {
             await mongo.concertModel.create({
                 setlist: setlist || [],
                 bandMembers: bandMembers || [],
                 merchandising: merchandising || [],
-                technicalRequirements: {},
-                socialMedia: {},
-                historicalData: {},
                 idConcertSql: nuevoConcierto.idConcert.toString()
             });
         }
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             message: 'Concierto creado exitosamente',
             idConcert: nuevoConcierto.idConcert
         });
 
     } catch (error) {
         console.error('Error al crear concierto:', error);
-        return res.status(500).json({ 
-            message: 'Error al crear el concierto', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Error al crear el concierto',
+            error: error.message
         });
     }
 };
+
+
+
 
 // ================ GESTIÓN DE RESERVAS DE CONCIERTOS ================
 
@@ -417,7 +446,7 @@ concertCtl.obtenerReservasConcierto = async (req, res) => {
 // Crear nueva reserva de concierto
 concertCtl.crearReservaConcierto = async (req, res) => {
     try {
-        const { 
+        const {
             usuarioId, concertId, seatId, ticketType, pricePaid,
             specialRequests, accessibilityNeeds
         } = req.body;
@@ -445,7 +474,7 @@ concertCtl.crearReservaConcierto = async (req, res) => {
             createConcertReservation: new Date().toLocaleString(),
         });
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             message: 'Reserva de concierto creada exitosamente',
             idReservation: nuevaReserva.idConcertReservation,
             reservationCode: reservationCode
@@ -453,9 +482,9 @@ concertCtl.crearReservaConcierto = async (req, res) => {
 
     } catch (error) {
         console.error('Error al crear reserva:', error);
-        return res.status(500).json({ 
-            message: 'Error al crear la reserva', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Error al crear la reserva',
+            error: error.message
         });
     }
 };
@@ -534,7 +563,7 @@ concertCtl.crearAsientosSeccion = async (req, res) => {
             }
         }
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             message: 'Asientos creados exitosamente',
             totalAsientos: asientosCreados.length,
             asientosCreados: asientosCreados
@@ -542,9 +571,9 @@ concertCtl.crearAsientosSeccion = async (req, res) => {
 
     } catch (error) {
         console.error('Error al crear asientos:', error);
-        return res.status(500).json({ 
-            message: 'Error al crear los asientos', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Error al crear los asientos',
+            error: error.message
         });
     }
 };
