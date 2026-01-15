@@ -2,32 +2,36 @@
    ESTILO: DARK ADMIN (Serio & Corporativo)
    ========================================= */
 
-/* Fondo general: Azul muy oscuro (Casi negro, igual que el cliente) */
+/* Fondo general: Usando variables del tema */
 body {
-  background-color: #0f172a; 
-  color: #f8fafc; /* Texto blanco suave para lectura */
+  background-color: var(--bg-primary, #0f172a); 
+  color: var(--text-primary, #f8fafc); /* Texto usando variable del tema */
   font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: var(--global-font-size, 16px);
   -webkit-font-smoothing: antialiased; /* Suavizado de fuente para elegancia */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Contenedor principal: Tarjeta oscura */
+/* Contenedor principal: Tarjeta usando variables del tema */
 .container {
   max-width: 1000px;
   margin: 40px auto;
-  background-color: #1e293b; /* Gris azulado oscuro */
+  background-color: var(--bg-card, #1e293b); /* Usando variable del tema */
   padding: 30px;
   border-radius: 14px;
-  border: 1px solid #334155; /* Borde sutil para definir la caja */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Sombra más profunda */
+  border: 1px solid var(--border-color, #334155); /* Borde usando variable */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Título: Usamos el Cyan de la marca para destacar */
+/* Título: Usando color de acento del tema */
 h1 {
   text-align: center;
   margin-bottom: 10px;
-  color: #2dd4bf; /* Color "Tienda de Extras" */
+  color: var(--accent-color, #2dd4bf); /* Usando variable del tema */
   font-weight: 700;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease;
 }
 
 /* Subtítulo */
@@ -35,9 +39,10 @@ h1 {
   content: "Administración y control de categorías de eventos";
   display: block;
   text-align: center;
-  color: #94a3b8; /* Gris medio para texto secundario */
+  color: var(--text-secondary, #94a3b8); /* Texto secundario del tema */
   margin-bottom: 30px;
   font-size: 14px;
+  transition: color 0.3s ease;
 }
 
 /* FORMULARIO */
@@ -50,13 +55,13 @@ h1 {
   border-bottom: 1px solid #334155; /* Separador sutil */
 }
 
-/* Inputs: Fondo oscuro para no dañar la vista */
+/* Inputs: Usando variables del tema */
 input {
   padding: 11px 14px;
   border-radius: 8px;
-  background-color: #0f172a; /* Fondo más oscuro que la tarjeta */
-  border: 1px solid #475569;
-  color: #fff; /* Texto blanco */
+  background-color: var(--bg-primary, #0f172a); /* Fondo del tema */
+  border: 1px solid var(--border-color, #475569);
+  color: var(--text-primary, #fff); /* Texto del tema */
   font-size: 14px;
   transition: all 0.3s ease;
 }
@@ -67,14 +72,14 @@ input::placeholder {
 
 input:focus {
   outline: none;
-  border-color: #2dd4bf; /* Borde Cyan al escribir */
-  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15); /* Resplandor suave */
+  border-color: var(--accent-color, #2dd4bf); /* Borde usando color de acento */
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
 }
 
 /* Botón principal (CREAR) */
 form button {
-  background-color: #2dd4bf; /* Cyan de marca */
-  color: #0f172a; /* Texto oscuro para contraste fuerte */
+  background-color: var(--accent-color, #2dd4bf); /* Color de acento del tema */
+  color: var(--bg-primary, #0f172a); /* Texto usando fondo del tema */
   border-radius: 8px;
   padding: 11px 25px;
   font-weight: 700;
@@ -86,23 +91,24 @@ form button {
 }
 
 form button:hover {
-  background-color: #14b8a6; /* Cyan un poco más oscuro */
-  box-shadow: 0 0 15px rgba(45, 212, 191, 0.4); /* Efecto neón sutil */
+  background-color: var(--accent-hover, #14b8a6); /* Hover del acento */
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.4);
 }
 
 /* FILTRO */
 select {
   padding: 8px 12px;
   border-radius: 8px;
-  background-color: #0f172a;
-  border: 1px solid #475569;
-  color: #fff;
+  background-color: var(--bg-primary, #0f172a);
+  border: 1px solid var(--border-color, #475569);
+  color: var(--text-primary, #fff);
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 select:focus {
     outline: none;
-    border-color: #2dd4bf;
+    border-color: var(--accent-color, #2dd4bf);
 }
 
 /* TABLA */
@@ -114,21 +120,23 @@ table {
 
 /* Cabecera de Tabla */
 th {
-  background-color: #1e293b; /* Mismo color fondo, sin caja gris */
-  color: #94a3b8; /* Texto gris azulado */
+  background-color: var(--bg-card, #1e293b); /* Usando variable del tema */
+  color: var(--text-secondary, #94a3b8); /* Texto secundario */
   padding: 14px;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid #334155; /* Línea divisoria */
+  border-bottom: 2px solid var(--border-color, #334155); /* Usando variable */
   text-align: left;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 td {
   padding: 16px 14px;
-  border-bottom: 1px solid #334155; /* Líneas muy sutiles */
+  border-bottom: 1px solid var(--border-color, #334155); /* Usando variable */
   font-size: 14px;
-  color: #cbd5e1;
+  color: var(--text-primary, #cbd5e1);
+  transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Estados (Diseño tipo "Pastilla/Badge" moderno) */

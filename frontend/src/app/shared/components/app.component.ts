@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,19 @@ export class AppComponent {
 
   eventosSubmenuOpen = false; // controla el submenu de Eventos
 
-  constructor(public router: Router) {}
+  constructor(
+    public router: Router,
+    private themeService: ThemeService
+  ) {}
+
+  ngOnInit(): void {
+    // Theme service is automatically initialized and applies theme globally
+    // Subscribe to listen for theme changes if needed
+    this.themeService.preferences$.subscribe(preferences => {
+      // Theme changes are automatically applied by the service
+      console.log('Theme changed to:', preferences.theme, 'Font size:', preferences.fontSize);
+    });
+  }
 
   // Métodos de navegación (opcionales si sigues usando routerLink directo)
   irDashboard(event: Event) {

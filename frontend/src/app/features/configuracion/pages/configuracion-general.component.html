@@ -5,6 +5,74 @@
     <h1>Configuración General</h1>
     <p class="subtitle">Gestiona todos los parámetros de tu plataforma desde un solo lugar</p>
     
+    <!-- Theme Controls -->
+    <div class="theme-controls">
+      <div class="theme-selector">
+        <span class="theme-label">Tema:</span>
+        <div class="theme-buttons">
+          <button 
+            class="theme-btn" 
+            [class.active]="currentPreferences.theme === 'light'"
+            (click)="setTheme('light')">
+            <i class="theme-icon">☀️</i>
+            Claro
+          </button>
+          <button 
+            class="theme-btn" 
+            [class.active]="currentPreferences.theme === 'dark'"
+            (click)="setTheme('dark')">
+            <i class="theme-icon">🌙</i>
+            Oscuro
+          </button>
+          <button 
+            class="theme-btn toggle-btn"
+            (click)="toggleTheme()"
+            title="Alternar tema">
+            <i class="theme-icon">🔄</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="font-size-control">
+        <span class="font-label">Tamaño de fuente:</span>
+        <div class="font-slider-container">
+          <input 
+            type="range" 
+            min="12" 
+            max="24" 
+            step="1"
+            [value]="currentPreferences.fontSize"
+            (input)="changeFontSize($event)"
+            class="font-slider">
+          <span class="font-size-display">{{currentPreferences.fontSize}}px</span>
+        </div>
+      </div>
+      
+      <div class="font-family-control">
+        <span class="font-label">Tipo de fuente:</span>
+        <div class="font-family-selector">
+          <select 
+            [value]="currentPreferences.fontFamily"
+            (change)="changeFontFamily($event)"
+            class="font-select">
+            <option value="Inter, -apple-system, BlinkMacSystemFont, sans-serif">Inter (Predeterminado)</option>
+            <option value="Roboto, Helvetica, Arial, sans-serif">Roboto</option>
+            <option value="Open Sans, Helvetica, Arial, sans-serif">Open Sans</option>
+            <option value="Lato, Helvetica, Arial, sans-serif">Lato</option>
+            <option value="Montserrat, Helvetica, Arial, sans-serif">Montserrat</option>
+            <option value="Poppins, Helvetica, Arial, sans-serif">Poppins</option>
+            <option value="Source Sans Pro, Helvetica, Arial, sans-serif">Source Sans Pro</option>
+            <option value="Nunito, Helvetica, Arial, sans-serif">Nunito</option>
+            <option value="Ubuntu, Helvetica, Arial, sans-serif">Ubuntu</option>
+            <option value="'Times New Roman', Times, serif">Times New Roman</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
+            <option value="Verdana, Geneva, sans-serif">Verdana</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
     <!-- Search/Filtro Bar -->
     <div class="search-filtro-bar">
       <div class="search-container">

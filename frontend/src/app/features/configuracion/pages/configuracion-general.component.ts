@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfiguracionService } from '../configuracion.service';
+import { ThemeService, ThemePreferences } from '../../../core/services/theme.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -52,10 +53,27 @@ export class ConfiguracionGeneralComponent implements OnInit {
   terminoBusqueda: string = '';
   seccionesFiltradas: string[] = ['plataforma', 'legales', 'faq', 'negocio'];
 
-  constructor(private configuracionService: ConfiguracionService) {}
+  // Preferencias de tema
+  currentPreferences: ThemePreferences = { 
+    theme: 'dark', 
+    fontSize: 16,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+  };
+  
+  constructor(
+    private configuracionService: ConfiguracionService,
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit(): void {
     this.cargarConfiguracion();
+    this.initializeTheme();
+  }
+
+  initializeTheme(): void {
+    this.themeService.preferences$.subscribe(prefs => {
+      this.currentPreferences = prefs;
+    });
   }
 
   cargarConfiguracion() {
@@ -305,6 +323,52 @@ export class ConfiguracionGeneralComponent implements OnInit {
     
     // Mostrar todas las secciones
     return true;
+  }
+
+  // Métodos para control de tema
+  setTheme(theme: 'light' | 'dark'): void {
+    this.themeService.setTheme(theme);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  changeFontSize(event: any): void {
+    const size = parseInt(event.target.value);
+    this.themeService.setFontSize(size);
+  }
+
+  changeFontFamily(event: any): void {
+    const fontFamily = event.target.value;
+    this.themeService.setFontFamily(fontFamily);
+  }
+
+  getFontSizeLabel(): string {
+    const sizes: Record<number, string> = {
+      12: 'Pequeño',
+      14: 'Mediano',
+      16: 'Normal',
+      18: 'Grande',
+      20: 'Muy Grande'
+    };
+    return sizes[this.currentPreferences.fontSize] || 'Normal';
+  }
+
+  resetThemeToDefaults(): void {
+    Swal.fire({
+      title: '¿Restablecer preferencias?',
+      text: 'Se restaurarán los valores predeterminados de tema y tamaño de fuente',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, restablecer',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.themeService.resetToDefaults();
+        Swal.fire('Listo!', 'Las preferencias han sido restablecidas', 'success');
+      }
+    });
   }
 
 }

@@ -9,13 +9,13 @@
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            Inicio
+            🏠 Inicio
           </a>
         </li>
 
         <li>
           <a routerLink="/clientes" routerLinkActive="active">
-            Clientes
+            👤 Clientes
           </a>
         </li>
 
@@ -23,33 +23,33 @@
         <li>
           <a href="#" (click)="toggleEventosSubmenu($event)" 
              [class.active]="eventosSubmenuOpen">
-            Administrar ▾
+            🎬 Administrar ▾
           </a>
           <ul *ngIf="eventosSubmenuOpen" class="submenu">
             <li>
-              <a routerLink="/eventos" routerLinkActive="active"> Peliculas</a>
+              <a routerLink="/eventos" routerLinkActive="active">🎥 Peliculas</a>
             </li>
             <li>
-              <a routerLink="/promociones" routerLinkActive="active"> Promociones</a>
+              <a routerLink="/promociones" routerLinkActive="active">🏷️ Promociones</a>
             </li>
             <li>
-              <a routerLink="/categorias" routerLinkActive="active"> Categorías</a>
+              <a routerLink="/categorias" routerLinkActive="active">📂 Categorías</a>
             </li>
             <li>
-              <a routerLink="/products" routerLinkActive="active"> Productos</a>
+              <a routerLink="/products" routerLinkActive="active">🛍️ Productos</a>
             </li>
             <li>
-              <a routerLink="/transport" routerLinkActive="active"> Transporte</a>
+              <a routerLink="/transport" routerLinkActive="active">🚗 Transporte</a>
             </li>
             <li>
-              <a routerLink="/conciertos" routerLinkActive="active"> Conciertos</a>
+              <a routerLink="/conciertos" routerLinkActive="active">🎵 Conciertos</a>
           </ul>
         </li>
 
         <!-- Configuración sigue normal -->
         <li>
           <a routerLink="/configuracion" routerLinkActive="active">
-            Configuración
+            ⚙️ Configuración
           </a>
         </li>
 

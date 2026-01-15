@@ -21,8 +21,8 @@ body {
 /* Sidebar */
 .sidebar {
   width: 220px;
-  background-color: #1f2937; /* gris oscuro */
-  color: white;
+  background-color: var(--bg-sidebar, #1f2937); /* Usando variable del tema para sidebar */
+  color: var(--text-sidebar, white);
   padding: 1rem;
   flex-shrink: 0;
 
@@ -31,6 +31,8 @@ body {
   left: 0;
   bottom: 0;
   overflow-y: auto;
+  border-right: 1px solid var(--border-color, #374151);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Lista */
@@ -44,28 +46,46 @@ body {
   margin-bottom: 0.25rem;
 }
 
+/* Submenu items */
+.submenu li {
+  margin-bottom: 0.1rem;
+}
+
+.submenu a {
+  padding: 0.5rem 1rem 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 /* Links */
 .sidebar a {
-  color: white;
+  color: var(--text-sidebar, white);
   text-decoration: none;
   font-weight: bold;
   display: block;
   padding: 0.75rem 0.8rem;
   border-radius: 8px;
   font-size: 0.95rem;
-  transition: background 0.2s ease, transform 0.08s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.08s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Hover */
 .sidebar a:hover {
-  background-color: #374151;
+  background-color: var(--bg-sidebar-hover, #374151);
+  color: var(--text-sidebar-hover, white);
   transform: translateX(3px);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.08s ease;
 }
 
 /* Link activo */
 .sidebar a.active {
-  background-color: #111827;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  background-color: var(--bg-sidebar-active, #111827);
+  color: var(--text-sidebar-active, white);
+  box-shadow: 0 2px 6px var(--shadow-dark, rgba(0, 0, 0, 0.25));
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Contenido principal */
@@ -73,7 +93,15 @@ body {
   margin-left: 220px;
   flex: 1;
   padding: 2rem;
-  background-color: #f3f4f6;
+  background-color: var(--bg-primary, #f3f4f6);
   min-height: 100vh;
   overflow-y: auto;
+  transition: background-color 0.3s ease;
+}
+
+/* Icon spacing */
+.sidebar a::before {
+  display: inline-block;
+  width: 1.2rem;
+  text-align: center;
 }
