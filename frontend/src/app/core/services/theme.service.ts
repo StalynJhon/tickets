@@ -5,7 +5,6 @@ import { BehaviorSubject } from 'rxjs';
 export interface ThemePreferences {
   theme: 'light' | 'dark';
   fontSize: number; // 12-24px
-  fontFamily: string; // Font family name
 }
 
 @Injectable({
@@ -14,8 +13,7 @@ export interface ThemePreferences {
 export class ThemeService {
   private preferencesSubject = new BehaviorSubject<ThemePreferences>({
     theme: 'dark',
-    fontSize: 16,
-    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+    fontSize: 16
   });
   
   public preferences$ = this.preferencesSubject.asObservable();
@@ -37,8 +35,7 @@ export class ThemeService {
         const parsed = JSON.parse(saved);
         this.preferencesSubject.next({
           theme: parsed.theme || 'dark',
-          fontSize: parsed.fontSize || 16,
-          fontFamily: parsed.fontFamily || 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+          fontSize: parsed.fontSize || 16
         });
       }
     } catch (error) {
@@ -66,9 +63,6 @@ export class ThemeService {
     
     // Apply font size globally
     document.documentElement.style.setProperty('--global-font-size', `${prefs.fontSize}px`);
-    
-    // Apply font family globally
-    document.documentElement.style.setProperty('--global-font-family', prefs.fontFamily);
     
     // Apply CSS variables for theme colors
     this.applyThemeVariables(prefs.theme);
@@ -201,13 +195,7 @@ export class ThemeService {
     this.applyPreferences();
   }
 
-  setFontFamily(font: string): void {
-    const current = this.preferencesSubject.value;
-    const newPrefs = { ...current, fontFamily: font };
-    this.preferencesSubject.next(newPrefs);
-    this.savePreferences(newPrefs);
-    this.applyPreferences();
-  }
+
 
   toggleTheme(): void {
     const current = this.preferencesSubject.value;
@@ -218,8 +206,7 @@ export class ThemeService {
   resetToDefaults(): void {
     const defaults: ThemePreferences = {
       theme: 'dark',
-      fontSize: 16,
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+      fontSize: 16
     };
     this.preferencesSubject.next(defaults);
     this.savePreferences(defaults);

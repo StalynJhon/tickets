@@ -216,45 +216,7 @@
   transition: color 0.3s ease;
 }
 
-/* ===============================
-  FONT FAMILY CONTROL
-================================ */
-.font-family-control {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-top: 15px;
-}
 
-.font-family-selector {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.font-select {
-  padding: 8px 12px;
-  border: 2px solid var(--border-color, #3a3f5c);
-  border-radius: 8px;
-  background: var(--bg-card, #0f172a);
-  color: var(--text-primary, #c0d6ff);
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 200px;
-}
-
-.font-select:focus {
-  outline: none;
-  border-color: var(--accent-color, #00f0ff);
-  box-shadow: 0 0 0 3px var(--accent-subtle, rgba(0,255,255,0.2));
-}
-
-.font-select:hover {
-  border-color: var(--accent-color, #00f0ff);
-  background: var(--bg-secondary, #1a1a40);
-}
 
 /* ===============================
    SEARCH/FILTRO BAR
@@ -791,16 +753,7 @@
     width: 100px;
   }
   
-  .font-family-control {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  
-  .font-select {
-    min-width: 180px;
-    font-size: 0.9rem;
-  }
+
   
   .faq-header {
     flex-direction: column;

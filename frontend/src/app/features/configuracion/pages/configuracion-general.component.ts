@@ -56,8 +56,7 @@ export class ConfiguracionGeneralComponent implements OnInit {
   // Preferencias de tema
   currentPreferences: ThemePreferences = { 
     theme: 'dark', 
-    fontSize: 16,
-    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+    fontSize: 16
   };
   
   constructor(
@@ -72,7 +71,10 @@ export class ConfiguracionGeneralComponent implements OnInit {
 
   initializeTheme(): void {
     this.themeService.preferences$.subscribe(prefs => {
-      this.currentPreferences = prefs;
+      this.currentPreferences = {
+        theme: prefs.theme,
+        fontSize: prefs.fontSize
+      };
     });
   }
 
@@ -339,10 +341,7 @@ export class ConfiguracionGeneralComponent implements OnInit {
     this.themeService.setFontSize(size);
   }
 
-  changeFontFamily(event: any): void {
-    const fontFamily = event.target.value;
-    this.themeService.setFontFamily(fontFamily);
-  }
+
 
   getFontSizeLabel(): string {
     const sizes: Record<number, string> = {
